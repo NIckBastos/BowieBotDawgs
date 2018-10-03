@@ -52,15 +52,17 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class BotDawg
 {
     /* Public OpMode members. */
-    public DcMotor leftFrontMotor   = null;
-    public DcMotor leftBackMotor  = null;
-    public DcMotor rightFrontMotor     = null;
-    public DcMotor rightBackMotor    = null;
-    public DcMotor liftMotor   = null;
-    public Servo leftClampServo    = null;
-    public Servo rightClampServo   = null;
-    public Servo armServo = null;
-    public ColorSensor colorSensor;
+//    public DcMotor leftFrontMotor   = null;
+//    public DcMotor leftBackMotor  = null;
+//    public DcMotor rightFrontMotor     = null;
+//    public DcMotor rightBackMotor    = null;
+//    public DcMotor liftMotor   = null;
+//    public Servo leftClampServo    = null;
+//    public Servo rightClampServo   = null;
+//    public Servo armServo = null;
+//    public ColorSensor colorSensor;
+    public DcMotor leftDrive= null;
+    public DcMotor rightDrive= null;
     public static final double MID_SERVO       =  0.5 ;
     public static final double ARM_UP_POWER    =  0.45 ;
     public static final double ARM_DOWN_POWER  = -0.45 ;
@@ -78,24 +80,25 @@ public class BotDawg
     public void init(HardwareMap hardwareMap) {
 
         //Assigning variables
-
-        leftFrontMotor = hardwareMap.dcMotor.get("Leftfront");
-        leftBackMotor = hardwareMap.dcMotor.get("Leftback");
-        rightFrontMotor = hardwareMap.dcMotor.get("Rightfront");
-        rightBackMotor = hardwareMap.dcMotor.get("Rightback");
-        liftMotor = hardwareMap.dcMotor.get("Lift");
-        leftClampServo = hardwareMap.servo.get("LeftClamp");
-        rightClampServo = hardwareMap.servo.get("RightClamp");
-        armServo = hardwareMap.servo.get("ServoArm");
-        colorSensor = hardwareMap.colorSensor.get("ColorSensor");
+          leftDrive = hardwareMap.dcMotor.get("leftDrive");
+          rightDrive = hardwareMap.dcMotor.get("rightDrive");
+//        leftFrontMotor = hardwareMap.dcMotor.get("Leftfront");
+//        leftBackMotor = hardwareMap.dcMotor.get("Leftback");
+//        rightFrontMotor = hardwareMap.dcMotor.get("Rightfront");
+//        rightBackMotor = hardwareMap.dcMotor.get("Rightback");
+//        liftMotor = hardwareMap.dcMotor.get("Lift");
+//        leftClampServo = hardwareMap.servo.get("LeftClamp");
+//        rightClampServo = hardwareMap.servo.get("RightClamp");
+//        armServo = hardwareMap.servo.get("ServoArm");
+//        colorSensor = hardwareMap.colorSensor.get("ColorSensor");
 
         //Assigning directions of motors
 
-        leftFrontMotor.setDirection(DcMotor.Direction.REVERSE);
-        leftBackMotor.setDirection(DcMotor.Direction.REVERSE);
-        rightFrontMotor.setDirection(DcMotor.Direction.FORWARD);
-        rightBackMotor.setDirection(DcMotor.Direction.FORWARD);
-        leftFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftDrive.setDirection(DcMotor.Direction.REVERSE);
+//        rightFrontMotor.setDirection(DcMotor.Direction.FORWARD);
+//        rightBackMotor.setDirection(DcMotor.Direction.FORWARD);
+//        leftFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
  }
 
