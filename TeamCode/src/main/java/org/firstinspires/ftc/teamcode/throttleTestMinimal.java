@@ -42,15 +42,16 @@ public class throttleTestMinimal extends OpMode {
     public void loop() {
 
         // assign the value of the joystick to the throttle variables.
-        double rightThrottle = -gamepad2.left_stick_y;
-        double leftThrottle = -gamepad2.right_stick_y;
-
+//        double rightThrottle = -gamepad2.left_stick_y;
+//        double leftThrottle = -gamepad2.right_stick_y;
+        robot.leftDrive.setPower(-gamepad2.left_stick_y);
+        robot.rightDrive.setPower(gamepad2.right_stick_y);
         //I MIGHT NEED TO ADD JOYSTICK_DEADBAND
 
 
         //Telemetry is not used to control the robot, it is purely to help debug by showing
         //Information on the phone
         telemetry.addData("Status", "Run Time: " + runtime.toString());
-        telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftThrottle, rightThrottle);
+        telemetry.addData("Motors", "left (%.2f), right (%.2f)", gamepad2.left_stick_y, gamepad2.right_stick_y);
     }
 }
