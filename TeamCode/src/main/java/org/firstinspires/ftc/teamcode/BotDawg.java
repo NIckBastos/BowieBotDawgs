@@ -61,8 +61,10 @@ public class BotDawg
 //    public Servo rightClampServo   = null;
 //    public Servo armServo = null;
 //    public ColorSensor colorSensor;
-    public DcMotor leftDrive= null;
-    public DcMotor rightDrive= null;
+    public DcMotor leftFrontMotor= null;
+    public DcMotor leftBackMotor= null;
+    public DcMotor rightBackMotor= null;
+    public DcMotor rightFrontMotor= null;
     public static final double MID_SERVO       =  0.5 ;
     public static final double ARM_UP_POWER    =  0.45 ;
     public static final double ARM_DOWN_POWER  = -0.45 ;
@@ -80,8 +82,10 @@ public class BotDawg
     public void init(HardwareMap hardwareMap) {
 
         //Assigning variables
-          leftDrive = hardwareMap.dcMotor.get("leftDrive");
-          rightDrive = hardwareMap.dcMotor.get("rightDrive");
+          leftFrontMotor = hardwareMap.dcMotor.get("frontLeft");
+          leftBackMotor = hardwareMap.dcMotor.get("backLeft");
+          rightBackMotor = hardwareMap.dcMotor.get("frontRight");
+          rightFrontMotor = hardwareMap.dcMotor.get("backRight");
 //        leftFrontMotor = hardwareMap.dcMotor.get("Leftfront");
 //        leftBackMotor = hardwareMap.dcMotor.get("Leftback");
 //        rightFrontMotor = hardwareMap.dcMotor.get("Rightfront");
@@ -94,8 +98,10 @@ public class BotDawg
 
         //Assigning directions of motors
 
-        rightDrive.setDirection(DcMotor.Direction.REVERSE);
-        leftDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftFrontMotor.setDirection(DcMotor.Direction.REVERSE);
+        leftBackMotor.setDirection(DcMotor.Direction.REVERSE);
+        rightFrontMotor.setDirection(DcMotor.Direction.REVERSE);
+        rightBackMotor.setDirection(DcMotor.Direction.REVERSE);
 //        rightFrontMotor.setDirection(DcMotor.Direction.FORWARD);
 //        rightBackMotor.setDirection(DcMotor.Direction.FORWARD);
 //        leftFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
