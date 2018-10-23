@@ -50,7 +50,6 @@ public class throttleTestMinimal extends OpMode {
         robot.rightFrontMotor.setPower(gamepad2.right_stick_y);
         //I MIGHT NEED TO ADD JOYSTICK_DEADBAND
 
-
         //Telemetry is not used to control the robot, it is purely to help debug by showing
         //Information on the phone
         telemetry.addData("Status", "Run Time: " + runtime.toString());
