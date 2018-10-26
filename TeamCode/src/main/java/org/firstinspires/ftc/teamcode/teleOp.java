@@ -78,7 +78,7 @@ public class teleOp extends OpenCVLinearOpModeBase {
     double leftBlueValue = imageProcessor.leftMineralBlue;
     double midBlueValue = imageProcessor.midMineralBlue;
     double rightBlueValue = imageProcessor.rightMineralBlue;
-
+    double blueMin = 0.0;
     private static final double     COUNTS_PER_MOTOR_REV    = 1440 ;    // eg: TETRIX Motor Encoder
     private static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // This is < 1.0 if geared UP
     private static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
@@ -127,6 +127,17 @@ public class teleOp extends OpenCVLinearOpModeBase {
         cameraManager.stop(context);
         imageProcessor.stop();
 
+        blueMin = min(leftBlueValue, midBlueValue, rightBlueValue);
+        //Cant use a switch statement because these are floating points.
+        if(blueMin == leftBlueValue){
+            //do stuff
+        }else if(blueMin == midBlueValue){
+            //do more stuff
+        }else if(blueMin == rightBlueValue){
+            //Do even more stuff
+        }else{
+            //do stuff if it cant detect correctlykmn  for some reason
+        }
     }
 
     /*
@@ -189,7 +200,6 @@ public class teleOp extends OpenCVLinearOpModeBase {
                         robot.rightFrontMotor.getCurrentPosition());
                 telemetry.update();
             }
-
             // Stop all motion;
             robot.leftFrontMotor.setPower(0);
             robot.rightFrontMotor.setPower(0);
@@ -228,7 +238,3 @@ public class teleOp extends OpenCVLinearOpModeBase {
         return (transformationMatrix != null) ? transformationMatrix.formatAsTransform() : "null";
     }
 }
-
-
-
-

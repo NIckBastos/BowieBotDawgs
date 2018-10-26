@@ -52,11 +52,6 @@ public class OpenCVLinearOpModeBase extends LinearOpMode implements  CameraBridg
         }
         cameraManager.stop(context);
         imageProcessor.stop();
-        double lowestBlue = 0.0;
-        double leftBlueValue = imageProcessor.leftMineralBlue;
-        double midBlueValue = imageProcessor.midMineralBlue;
-        double rightBlueValue = imageProcessor.rightMineralBlue;
-
 //        public static void min(double a, double b, double c) {
 //            lowestBlue = Math.min(Math.min(a, b), c);
 //        }
