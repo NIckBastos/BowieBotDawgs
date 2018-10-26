@@ -27,6 +27,8 @@ package org.firstinspires.ftc.teamcode;/* Copyright (c) 2017 FIRST. All rights r
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import android.content.Context;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -73,6 +75,9 @@ public class teleOp extends OpenCVLinearOpModeBase {
     private BotDawg robot = new BotDawg();   // Use a Pushbot's hardware
     private ElapsedTime runtime = new ElapsedTime();
 
+    double leftBlueValue = imageProcessor.leftMineralBlue;
+    double midBlueValue = imageProcessor.midMineralBlue;
+    double rightBlueValue = imageProcessor.rightMineralBlue;
 
     private static final double     COUNTS_PER_MOTOR_REV    = 1440 ;    // eg: TETRIX Motor Encoder
     private static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // This is < 1.0 if geared UP
@@ -81,6 +86,10 @@ public class teleOp extends OpenCVLinearOpModeBase {
             (WHEEL_DIAMETER_INCHES * 3.1415);
     static final double     DRIVE_SPEED             = 1.0;
     static final double     TURN_SPEED              = 0.5;
+
+    public static double min(double a, double b, double c) {
+        return Math.min(Math.min(a, b), c);
+    }
     @Override
     public void runOpMode(){
         robot.init(hardwareMap);
@@ -101,6 +110,23 @@ public class teleOp extends OpenCVLinearOpModeBase {
         waitForStart();
         telemetry.addData("Path", "Complete");
         telemetry.update();
+        Context context = hardwareMap.appContext;
+
+        cameraManager.initialize(context, true, this);
+        imageProcessor.initialize();
+
+        waitForStart();
+
+        while (opModeIsActive()) {
+            imageProcessor.takePicture();
+            while(opModeIsActive() && !imageProcessor.isFrameReady()){
+                idle();
+            }
+
+        }
+        cameraManager.stop(context);
+        imageProcessor.stop();
+
     }
 
     /*
