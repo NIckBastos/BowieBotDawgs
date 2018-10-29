@@ -50,6 +50,9 @@ public class throttleTestMinimal extends OpMode {
         robot.rightBackDrive.setPower(gamepad2.right_stick_y);
         robot.rightFrontDrive.setPower(gamepad2.right_stick_y);
 
+        // Setting the power of the lift motor to the y value of the gamepad1 right joystick
+        robot.liftMotor.setPower(gamepad1.right_stick_y);
+
         //I MIGHT NEED TO ADD JOYSTICK_DEADBAND
 
 

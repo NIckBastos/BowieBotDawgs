@@ -86,6 +86,7 @@ public class teleOp extends OpenCVLinearOpModeBase {
             (WHEEL_DIAMETER_INCHES * 3.1415);
     static final double     DRIVE_SPEED             = 1.0;
     static final double     TURN_SPEED              = 0.5;
+    static final double     Lift_Speed              = 0.4;
 
     public static double min(double a, double b, double c) {
         return Math.min(Math.min(a, b), c);
@@ -150,32 +151,32 @@ public class teleOp extends OpenCVLinearOpModeBase {
      */
 
     public void encoderDrive(double speed,
-                             double leftInches, double rightInches,
-                             double timeoutS) {
-        int newLeftFrontTarget;
-        int newRightFrontTarget;
-        int newLeftBackTarget;
-        int newRightBackTarget;
+            double leftInches, double rightInches,
+            double timeoutS) {
+                int newLeftFrontTarget;
+                int newRightFrontTarget;
+                int newLeftBackTarget;
+                int newRightBackTarget;
 
-        // Ensure that the opmode is still active
-        if (opModeIsActive()) {
+                // Ensure that the opmode is still active
+                if (opModeIsActive()) {
 
-            // Determine new target position, and pass to motor controller
-            newLeftFrontTarget = robot.leftFrontMotor.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
-            newRightFrontTarget = robot.rightFrontMotor.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
-            newLeftBackTarget = robot.leftBackMotor.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
-            newRightBackTarget = robot.rightBackMotor.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
+                    // Determine new target position, and pass to motor controller
+                    newLeftFrontTarget = robot.leftFrontMotor.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
+                    newRightFrontTarget = robot.rightFrontMotor.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
+                    newLeftBackTarget = robot.leftBackMotor.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
+                    newRightBackTarget = robot.rightBackMotor.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
 
-            robot.leftFrontMotor.setTargetPosition(newLeftFrontTarget);
-            robot.rightFrontMotor.setTargetPosition(newRightFrontTarget);
-            robot.leftBackMotor.setTargetPosition(newLeftBackTarget);
-            robot.rightBackMotor.setTargetPosition(newRightBackTarget);
+                    robot.leftFrontMotor.setTargetPosition(newLeftFrontTarget);
+                    robot.rightFrontMotor.setTargetPosition(newRightFrontTarget);
+                    robot.leftBackMotor.setTargetPosition(newLeftBackTarget);
+                    robot.rightBackMotor.setTargetPosition(newRightBackTarget);
 
-            // Turn On RUN_TO_POSITION
-            robot.leftFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.rightFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.leftBackMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.rightBackMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    // Turn On RUN_TO_POSITION
+                    robot.leftFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    robot.rightFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    robot.leftBackMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    robot.rightBackMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             // reset the timeout time and start motion.
             runtime.reset();
@@ -215,16 +216,67 @@ public class teleOp extends OpenCVLinearOpModeBase {
 
 
 
+
+
+
+
+
+    public void encoderLift(double speed,
+                             double yInches,
+                             double timeoutS) {
+        int newYTarget;
+
+
+        // Ensure that the opmode is still active
+        if (opModeIsActive()) {
+
+            // Determine new target position, and pass to motor controller
+            newYTarget = robot.liftMotor.getCurrentPosition() + (int)(yInches * COUNTS_PER_INCH);
+
+
+            robot.liftMotor.setTargetPosition(newYTarget);
+
+            // Turn On RUN_TO_POSITION
+            robot.liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+
+            // reset the timeout time and start motion.
+            runtime.reset();
+            robot.liftMotor.setPower(Math.abs(speed));
+
+
+            while (opModeIsActive() &&
+                    (runtime.seconds() < timeoutS) &&
+                    (robot.liftMotor.isBusy())) {
+
+                // Display it for the driver.
+                telemetry.addData("Path2",  "Running at %7d :%7d",
+                        robot.liftMotor.getCurrentPosition(),
+
+                telemetry.update();
+            }
+            // Stop all motion;
+            robot.liftMotor.setPower(0);
+
+            // Turn off RUN_TO_POSITION
+            robot.liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        }
+    }
+
+
+
+
+
     // Look at AutonomousSudo text file for more info abouut these 3 methods
     public void left(){
         while(opModeIsActive()) {
-            //Lower Robot to ground//
+            encoderLift(Lift_Speed, 5, 2)
             //Turn X Degrees??????????????//
 
             encoderDrive(DRIVE_SPEED, 3.1, 3.1, 2);
 
             //Turn -X Degrees????????????//
-
             encoderDrive(DRIVE_SPEED, 3.1, 3.1, 2);
 
             robot.markerServo.setPosition(1.0);
@@ -237,7 +289,7 @@ public class teleOp extends OpenCVLinearOpModeBase {
 
     public void center(){
         while(opModeIsActive()) {
-            //Lower Robot to ground//
+            encoderLift(Lift_Speed, 5, 2)
             encoderDrive(DRIVE_SPEED, 2, 2, 1.5);
             robot.markerServo.setPosition(1.0);
 
@@ -249,7 +301,7 @@ public class teleOp extends OpenCVLinearOpModeBase {
 
     public void right(){
         while(opModeIsActive()) {
-            //Lower Robot to ground//
+            encoderLift(Lift_Speed, 5, 2)
             //Turn Y Degrees??????????????//
 
             encoderDrive(DRIVE_SPEED, 3.1, 3.1, 2);
@@ -267,7 +319,7 @@ public class teleOp extends OpenCVLinearOpModeBase {
 
     public void default(){
         while(opModeIsActive()) {
-            // Lower robot to ground//
+            encoderLift(Lift_Speed, 5, 2)
 
             robot.leftFrontMotor.setPower(0);
             robot.leftBackMotor.setPower(0);
