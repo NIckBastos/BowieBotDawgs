@@ -65,6 +65,8 @@ public class BotDawg
     public DcMotor leftBackMotor= null;
     public DcMotor rightBackMotor= null;
     public DcMotor rightFrontMotor= null;
+    public DcMotor liftMotor= null;
+    public Servo markerServo= null;
     public static final double MID_SERVO       =  0.5 ;
     public static final double ARM_UP_POWER    =  0.45 ;
     public static final double ARM_DOWN_POWER  = -0.45 ;
@@ -86,11 +88,12 @@ public class BotDawg
           leftBackMotor = hardwareMap.dcMotor.get("backLeft");
           rightBackMotor = hardwareMap.dcMotor.get("frontRight");
           rightFrontMotor = hardwareMap.dcMotor.get("backRight");
+          liftMotor = hardwareMap.dcMotor.get("liftMotor")
+          markerServo = hardwareMap.servo.get("MarkerServo")
 //        leftFrontMotor = hardwareMap.dcMotor.get("Leftfront");
 //        leftBackMotor = hardwareMap.dcMotor.get("Leftback");
 //        rightFrontMotor = hardwareMap.dcMotor.get("Rightfront");
 //        rightBackMotor = hardwareMap.dcMotor.get("Rightback");
-//        liftMotor = hardwareMap.dcMotor.get("Lift");
 //        leftClampServo = hardwareMap.servo.get("LeftClamp");
 //        rightClampServo = hardwareMap.servo.get("RightClamp");
 //        armServo = hardwareMap.servo.get("ServoArm");

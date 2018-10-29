@@ -130,13 +130,13 @@ public class teleOp extends OpenCVLinearOpModeBase {
         blueMin = min(leftBlueValue, midBlueValue, rightBlueValue);
         //Cant use a switch statement because these are floating points.
         if(blueMin == leftBlueValue){
-            //do stuff
+            //Run method left
         }else if(blueMin == midBlueValue){
-            //do more stuff
+            //Run method center
         }else if(blueMin == rightBlueValue){
-            //Do even more stuff
+            //Run method right
         }else{
-            //do stuff if it cant detect correctlykmn  for some reason
+            //run method default
         }
     }
 
@@ -212,6 +212,77 @@ public class teleOp extends OpenCVLinearOpModeBase {
             //  sleep(250);   // optional pause after each move
         }
     }
+
+
+
+    // Look at AutonomousSudo text file for more info abouut these 3 methods
+    public void left(){
+        while(opModeIsActive()) {
+            //Lower Robot to ground//
+            //Turn X Degrees??????????????//
+
+            encoderDrive(DRIVE_SPEED, 3.1, 3.1, 2);
+
+            //Turn -X Degrees????????????//
+
+            encoderDrive(DRIVE_SPEED, 3.1, 3.1, 2);
+
+            robot.markerServo.setPosition(1.0);
+
+            //Turn 225 Degrees??????????????//
+
+            encoderDrive(DRIVE_SPEED, 8, 8, 6.0)
+        }
+    }
+
+    public void center(){
+        while(opModeIsActive()) {
+            //Lower Robot to ground//
+            encoderDrive(DRIVE_SPEED, 2, 2, 1.5);
+            robot.markerServo.setPosition(1.0);
+
+            //Turn 270 Degrees??????????????//
+
+            encoderDrive(DRIVE_SPEED, 8, 8, 6.0)
+        }
+    }
+
+    public void right(){
+        while(opModeIsActive()) {
+            //Lower Robot to ground//
+            //Turn Y Degrees??????????????//
+
+            encoderDrive(DRIVE_SPEED, 3.1, 3.1, 2);
+
+            //Turn -Y Degrees????????????//
+
+            encoderDrive(DRIVE_SPEED, 3.1, 3.1, 2);
+            robot.markerServo.setPosition(1.0);
+
+            //Turn 315 Degrees??????????????//
+
+            encoderDrive(DRIVE_SPEED, 8, 8, 6.0);
+        }
+    }
+
+    public void default(){
+        while(opModeIsActive()) {
+            // Lower robot to ground//
+
+            robot.leftFrontMotor.setPower(0);
+            robot.leftBackMotor.setPower(0);
+            robot.rightFrontMotor.setPower(0);
+            robot.rightBackMotor.setPower(0);
+        }
+    }
+
+
+
+
+
+
+
+
 //
 //    public void jewel(double holdTime){
 //        ElapsedTime holdTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
