@@ -214,13 +214,6 @@ public class teleOp extends OpenCVLinearOpModeBase {
         }
     }
 
-
-
-
-
-
-
-
     public void encoderLift(double speed,
                              double yInches,
                              double timeoutS) {
@@ -277,6 +270,7 @@ public class teleOp extends OpenCVLinearOpModeBase {
             encoderDrive(DRIVE_SPEED, 3.1, 3.1, 2);
 
             //Turn -X Degrees????????????//
+
             encoderDrive(DRIVE_SPEED, 3.1, 3.1, 2);
 
             robot.markerServo.setPosition(1.0);
