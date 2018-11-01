@@ -29,6 +29,7 @@ package org.firstinspires.ftc.teamcode;/* Copyright (c) 2017 FIRST. All rights r
 
 import android.content.Context;
 
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -68,12 +69,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 @Autonomous(name="AutoDepot", group="Pushbot")
 //@Disabled
 public class AutoDepot extends OpenCVLinearOpModeBase {
-
-
-
+    
     /* Declare OpMode members. */
     private BotDawg robot = new BotDawg();   // Use a Pushbot's hardware
     private ElapsedTime runtime = new ElapsedTime();
+    ModernRoboticsI2cGyro   gyro    = null;
 
     double leftBlueValue = imageProcessor.leftMineralBlue;
     double midBlueValue = imageProcessor.midMineralBlue;
@@ -94,7 +94,7 @@ public class AutoDepot extends OpenCVLinearOpModeBase {
     @Override
     public void runOpMode(){
         robot.init(hardwareMap);
-
+        gyro = (ModernRoboticsI2cGyro)hardwareMap.gyroSensor.get("gyro");
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Status", "Resetting Encoders");
         telemetry.update();
@@ -261,7 +261,7 @@ public class AutoDepot extends OpenCVLinearOpModeBase {
 
 
     // Look at AutonomousSudo text file for more info abouut these 3 methods
-    public void left(){
+    public void leftPath(){
         while(opModeIsActive()) {
             encoderLift(Lift_Speed, 5, 2);
             //Turn X Degrees??????????????//
@@ -280,7 +280,7 @@ public class AutoDepot extends OpenCVLinearOpModeBase {
         }
     }
 
-    public void center(){
+    public void centerPath(){
         while(opModeIsActive()) {
             encoderLift(Lift_Speed, 5, 2);
             encoderDrive(DRIVE_SPEED, 2, 2, 1.5);
@@ -292,7 +292,7 @@ public class AutoDepot extends OpenCVLinearOpModeBase {
         }
     }
 
-    public void right(){
+    public void rightPath(){
         while(opModeIsActive()) {
             encoderLift(Lift_Speed, 5, 2);
             //Turn Y Degrees??????????????//
@@ -320,35 +320,6 @@ public class AutoDepot extends OpenCVLinearOpModeBase {
         }
     }
 
-
-
-
-
-
-
-
-//
-//    public void jewel(double holdTime){
-//        ElapsedTime holdTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
-//        holdTimer.reset();
-//        while(opModeIsActive() && holdTimer.time() < holdTime){
-//            if (robot.colorSensor.blue() > robot.colorSensor.red() + 2) {
-//                encoderDrive(DRIVE_SPEED, -3, -3, 2.0);
-//                robot.armServo.setPosition(1.0);
-//                encoderDrive(DRIVE_SPEED, 3, 3, 2.0);
-//            } else if (robot.colorSensor.blue() < robot.colorSensor.red() - 2) {
-//                encoderDrive(DRIVE_SPEED, 3, 3, 2.0);
-//                robot.armServo.setPosition(1.0);
-//                encoderDrive(DRIVE_SPEED, -3, -3, 2.0);
-//            } else {
-//                robot.leftBackMotor.setPower(0);
-//                robot.leftFrontMotor.setPower(0);
-//                robot.rightBackMotor.setPower(0);
-//                robot.leftBackMotor.setPower(0);
-//            }
-//        }
-//        robot.armServo.setPosition(1.0);
-//    }
     String format(OpenGLMatrix transformationMatrix) {
         return (transformationMatrix != null) ? transformationMatrix.formatAsTransform() : "null";
     }
