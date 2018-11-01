@@ -370,7 +370,7 @@ public class AutoDepot extends OpenCVLinearOpModeBase {
 
 
     // Look at AutonomousSudo text file for more info abouut these 3 methods
-    public void left(){
+    public void leftPath(){
         while(opModeIsActive()) {
             encoderLift(Lift_Speed, 5, 2);
             //Turn X Degrees??????????????//
@@ -389,7 +389,7 @@ public class AutoDepot extends OpenCVLinearOpModeBase {
         }
     }
 
-    public void center(){
+    public void centerPath(){
         while(opModeIsActive()) {
             encoderLift(Lift_Speed, 5, 2);
             encoderDrive(DRIVE_SPEED, 2, 2, 1.5);
@@ -401,7 +401,7 @@ public class AutoDepot extends OpenCVLinearOpModeBase {
         }
     }
 
-    public void right(){
+    public void rightPath(){
         while(opModeIsActive()) {
             encoderLift(Lift_Speed, 5, 2);
             //Turn Y Degrees??????????????//
