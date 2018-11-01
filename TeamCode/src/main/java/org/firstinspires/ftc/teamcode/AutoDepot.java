@@ -65,7 +65,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="AutoTeamBlueBackward", group="Pushbot")
+@Autonomous(name="AutoDepot", group="Pushbot")
 //@Disabled
 public class AutoDepot extends OpenCVLinearOpModeBase {
 
@@ -84,7 +84,7 @@ public class AutoDepot extends OpenCVLinearOpModeBase {
     private static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
     private static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.1415);
-    static final double     DRIVE_SPEED             = 1.0;
+    static final double     DRIVE_SPEED             = 0.7;
     static final double     TURN_SPEED              = 0.5;
     static final double     Lift_Speed              = 0.4;
 
