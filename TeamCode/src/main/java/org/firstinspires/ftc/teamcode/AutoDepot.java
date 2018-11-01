@@ -67,7 +67,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 
 @Autonomous(name="AutoTeamBlueBackward", group="Pushbot")
 //@Disabled
-public class teleOp extends OpenCVLinearOpModeBase {
+public class AutoDepot extends OpenCVLinearOpModeBase {
 
 
 
@@ -244,8 +244,7 @@ public class teleOp extends OpenCVLinearOpModeBase {
 
                 // Display it for the driver.
                 telemetry.addData("Path2",  "Running at %7d :%7d",
-                        robot.liftMotor.getCurrentPosition(),
-
+                        robot.liftMotor.getCurrentPosition());
                 telemetry.update();
             }
             // Stop all motion;
@@ -264,7 +263,7 @@ public class teleOp extends OpenCVLinearOpModeBase {
     // Look at AutonomousSudo text file for more info abouut these 3 methods
     public void left(){
         while(opModeIsActive()) {
-            encoderLift(Lift_Speed, 5, 2)
+            encoderLift(Lift_Speed, 5, 2);
             //Turn X Degrees??????????????//
 
             encoderDrive(DRIVE_SPEED, 3.1, 3.1, 2);
@@ -277,27 +276,26 @@ public class teleOp extends OpenCVLinearOpModeBase {
 
             //Turn 225 Degrees??????????????//
 
-            encoderDrive(DRIVE_SPEED, 8, 8, 6.0)
+            encoderDrive(DRIVE_SPEED, 8, 8, 6.0);
         }
     }
 
     public void center(){
         while(opModeIsActive()) {
-            encoderLift(Lift_Speed, 5, 2)
+            encoderLift(Lift_Speed, 5, 2);
             encoderDrive(DRIVE_SPEED, 2, 2, 1.5);
             robot.markerServo.setPosition(1.0);
 
             //Turn 270 Degrees??????????????//
 
-            encoderDrive(DRIVE_SPEED, 8, 8, 6.0)
+            encoderDrive(DRIVE_SPEED, 8, 8, 6.0);
         }
     }
 
     public void right(){
         while(opModeIsActive()) {
-            encoderLift(Lift_Speed, 5, 2)
+            encoderLift(Lift_Speed, 5, 2);
             //Turn Y Degrees??????????????//
-
             encoderDrive(DRIVE_SPEED, 3.1, 3.1, 2);
 
             //Turn -Y Degrees????????????//
@@ -311,9 +309,9 @@ public class teleOp extends OpenCVLinearOpModeBase {
         }
     }
 
-    public void default(){
+    public void defaultPath(){
         while(opModeIsActive()) {
-            encoderLift(Lift_Speed, 5, 2)
+            encoderLift(Lift_Speed, 5, 2);
 
             robot.leftFrontMotor.setPower(0);
             robot.leftBackMotor.setPower(0);
