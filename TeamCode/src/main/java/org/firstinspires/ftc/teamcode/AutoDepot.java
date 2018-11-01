@@ -429,35 +429,6 @@ public class AutoDepot extends OpenCVLinearOpModeBase {
         }
     }
 
-
-
-
-
-
-
-
-//
-//    public void jewel(double holdTime){
-//        ElapsedTime holdTimer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
-//        holdTimer.reset();
-//        while(opModeIsActive() && holdTimer.time() < holdTime){
-//            if (robot.colorSensor.blue() > robot.colorSensor.red() + 2) {
-//                encoderDrive(DRIVE_SPEED, -3, -3, 2.0);
-//                robot.armServo.setPosition(1.0);
-//                encoderDrive(DRIVE_SPEED, 3, 3, 2.0);
-//            } else if (robot.colorSensor.blue() < robot.colorSensor.red() - 2) {
-//                encoderDrive(DRIVE_SPEED, 3, 3, 2.0);
-//                robot.armServo.setPosition(1.0);
-//                encoderDrive(DRIVE_SPEED, -3, -3, 2.0);
-//            } else {
-//                robot.leftBackMotor.setPower(0);
-//                robot.leftFrontMotor.setPower(0);
-//                robot.rightBackMotor.setPower(0);
-//                robot.leftBackMotor.setPower(0);
-//            }
-//        }
-//        robot.armServo.setPosition(1.0);
-//    }
     String format(OpenGLMatrix transformationMatrix) {
         return (transformationMatrix != null) ? transformationMatrix.formatAsTransform() : "null";
     }

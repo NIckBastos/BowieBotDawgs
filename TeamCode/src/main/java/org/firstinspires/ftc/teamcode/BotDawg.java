@@ -90,7 +90,6 @@ public class BotDawg
           rightFrontMotor = hardwareMap.dcMotor.get("backRight");
           liftMotor = hardwareMap.dcMotor.get("liftMotor")
           markerServo = hardwareMap.servo.get("MarkerServo")
-          imu = hardwareMap.get(BNO055IMU.class, "imu");
 //        leftFrontMotor = hardwareMap.dcMotor.get("Leftfront");
 //        leftBackMotor = hardwareMap.dcMotor.get("Leftback");
 //        rightFrontMotor = hardwareMap.dcMotor.get("Rightfront");
