@@ -29,6 +29,7 @@ package org.firstinspires.ftc.teamcode;/* Copyright (c) 2017 FIRST. All rights r
 
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -67,6 +68,9 @@ public class BotDawg
     public DcMotor rightFrontMotor= null;
     public DcMotor liftMotor= null;
     public Servo markerServo= null;
+    public DcMotor scoopMotor = null;
+    public Servo leftLiftServo = null;
+    public Servo rightLiftServo = null;
     public static final double MID_SERVO       =  0.5 ;
     public static final double ARM_UP_POWER    =  0.45 ;
     public static final double ARM_DOWN_POWER  = -0.45 ;
@@ -88,16 +92,11 @@ public class BotDawg
           leftBackMotor = hardwareMap.dcMotor.get("backLeft");
           rightBackMotor = hardwareMap.dcMotor.get("frontRight");
           rightFrontMotor = hardwareMap.dcMotor.get("backRight");
-          liftMotor = hardwareMap.dcMotor.get("liftMotor")
-          markerServo = hardwareMap.servo.get("MarkerServo")
-//        leftFrontMotor = hardwareMap.dcMotor.get("Leftfront");
-//        leftBackMotor = hardwareMap.dcMotor.get("Leftback");
-//        rightFrontMotor = hardwareMap.dcMotor.get("Rightfront");
-//        rightBackMotor = hardwareMap.dcMotor.get("Rightback");
-//        leftClampServo = hardwareMap.servo.get("LeftClamp");
-//        rightClampServo = hardwareMap.servo.get("RightClamp");
-//        armServo = hardwareMap.servo.get("ServoArm");
-//        colorSensor = hardwareMap.colorSensor.get("ColorSensor");
+          liftMotor = hardwareMap.dcMotor.get("liftMotor");
+          markerServo = hardwareMap.servo.get("MarkerServo");
+          scoopMotor = hardwareMap.dcMotor.get("scoopMotor");
+          leftLiftServo = hardwareMap.servo.get("leftLiftServo");
+          rightLiftServo = hardwareMap.servo.get("rightLiftServo");
 
         //Assigning directions of motors
 
@@ -105,9 +104,17 @@ public class BotDawg
         leftBackMotor.setDirection(DcMotor.Direction.REVERSE);
         rightFrontMotor.setDirection(DcMotor.Direction.REVERSE);
         rightBackMotor.setDirection(DcMotor.Direction.REVERSE);
-//        rightFrontMotor.setDirection(DcMotor.Direction.FORWARD);
-//        rightBackMotor.setDirection(DcMotor.Direction.FORWARD);
+
 //        leftFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+      leftFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+      leftBackMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+      rightFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+      rightBackMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+      liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+      scoopMotor.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
+      scoopMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+
     }
  }
 

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp(name = "throttleTestMinimal", group = "TeleOp")
@@ -17,7 +18,7 @@ public class throttleTestMinimal extends OpMode {
 
     //Encoder Ticks Variables
     private static final double     COUNTS_PER_MOTOR_REV    = 1440 ;    // eg: TETRIX Motor Encoder
-    private static final double     DRIVE_GEAR_REDUCTION    = 2.0 / 3 ;     // This is < 1.0 if geared UP
+    private static final double     DRIVE_GEAR_REDUCTION    = 2 ;     // This is < 1.0 if geared UP
     private static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
     private static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.1415);
@@ -44,14 +45,25 @@ public class throttleTestMinimal extends OpMode {
         // assign the value of the joystick to the throttle variables.
 //        double rightThrottle = -gamepad2.left_stick_y;
 //        double leftThrottle = -gamepad2.right_stick_y;
-        robot.leftBackDrive.setPower(-gamepad2.left_stick_y);
-        robot.leftFrontDrive.setPower(-gamepad2.left_stick_y);
+        robot.leftBackMotor.setPower(-gamepad2.left_stick_y);
+        robot.leftFrontMotor.setPower(-gamepad2.left_stick_y);
 
-        robot.rightBackDrive.setPower(gamepad2.right_stick_y);
-        robot.rightFrontDrive.setPower(gamepad2.right_stick_y);
+        robot.rightBackMotor.setPower(gamepad2.right_stick_y);
+        robot.rightFrontMotor.setPower(gamepad2.right_stick_y);
 
         // Setting the power of the lift motor to the y value of the gamepad1 right joystick
         robot.liftMotor.setPower(gamepad1.right_stick_y);
+
+        // Setting the power of the scoop motor to the bumpers of the gamepad1
+        if(!gamepad1.dpad_down && gamepad1.dpad_up){
+          robot.scoopMotor.setTargetPosition(288);
+        }else if (gamepad1.dpad_down && !gamepad1.dpad_up){
+          robot.scoopMotor.setTargetPosition(0);
+        }else{
+            robot.scoopMotor.setPower(0.0);
+        }
+
+
 
         //I MIGHT NEED TO ADD JOYSTICK_DEADBAND
 
@@ -60,5 +72,6 @@ public class throttleTestMinimal extends OpMode {
         //Information on the phone
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         telemetry.addData("Motors", "left (%.2f), right (%.2f)", gamepad2.left_stick_y, gamepad2.right_stick_y);
+        telemetry.addData("Dpad up","Up, Down", gamepad1.dpad_up,gamepad1.dpad_down);
     }
 }

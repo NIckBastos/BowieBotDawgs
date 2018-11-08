@@ -510,9 +510,9 @@ public class ImageProcessor {
             midMineralMat.create(rgba.size(), 0);
             rightMineralMat.create(rgba.size(), 0);
 
-            Rect leftMineral = new Rect(new Point(0, 0), new Point (50, 50));
-            Rect rightMineral = new Rect(new Point(0, 0), new Point (100, 100));
-            Rect midMineral = new Rect(new Point(50, 0), new Point (100, 50));
+            Rect leftMineral = new Rect(new Point(255, 0), new Point (555, 50));
+            Rect rightMineral = new Rect(new Point(810, 0), new Point (1100, 50));
+            Rect midMineral = new Rect(new Point(1365, 0), new Point (1665, 50));
 
             rgba.submat(leftMineral).copyTo(leftMineralMat);
             rgba.submat(midMineral).copyTo(midMineralMat);
