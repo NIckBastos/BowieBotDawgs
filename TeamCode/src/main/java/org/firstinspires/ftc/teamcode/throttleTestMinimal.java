@@ -30,7 +30,6 @@ public class throttleTestMinimal extends OpMode {
 
         robot = new BotDawg();
         robot.init(hardwareMap);
-
     }
 
     //Code that resets the elapsed time once the driver hits play
@@ -56,11 +55,19 @@ public class throttleTestMinimal extends OpMode {
 
         // Setting the power of the scoop motor to the bumpers of the gamepad1
         if(!gamepad1.dpad_down && gamepad1.dpad_up){
-          robot.scoopMotor.setTargetPosition(288);
+          robot.scoopMotor.setTargetPosition(72);
         }else if (gamepad1.dpad_down && !gamepad1.dpad_up){
           robot.scoopMotor.setTargetPosition(0);
         }else{
             robot.scoopMotor.setPower(0.0);
+        }
+
+        if(gamepad1.right_bumper && !gamepad1.left_bumper){
+            robot.leftLiftServo.setPosition(1.0);
+            robot.rightLiftServo.setPosition(1.0);
+        }else if(!gamepad1.right_bumper && gamepad1.left_bumper){
+            robot.leftLiftServo.setPosition(0.0);
+            robot.rightLiftServo.setPosition(0.0);
         }
 
 

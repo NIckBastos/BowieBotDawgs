@@ -98,6 +98,7 @@ public class BotDawg
           leftLiftServo = hardwareMap.servo.get("leftLiftServo");
           rightLiftServo = hardwareMap.servo.get("rightLiftServo");
 
+
         //Assigning directions of motors
 
         leftFrontMotor.setDirection(DcMotor.Direction.REVERSE);
@@ -113,6 +114,7 @@ public class BotDawg
       liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
       scoopMotor.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
       scoopMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+      scoopMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
     }
