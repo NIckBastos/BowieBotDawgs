@@ -89,9 +89,9 @@ public class ImageProcessor {
     private Mat redL1;
     private Mat redH1;
     private Mat red1;
-    private Mat leftMineralMat = new Mat();
-    private Mat midMineralMat = new Mat();
-    private Mat rightMineralMat = new Mat();
+//    private Mat leftMineralMat = new Mat();
+//    private Mat midMineralMat = new Mat();
+//    private Mat rightMineralMat = new Mat();
 
     public double leftMineralBlue = 0.0;
     public double midMineralBlue= 0.0;
@@ -504,15 +504,15 @@ public class ImageProcessor {
         //Blue filter goes here
         Mat rgba = inputFrame.rgba();
 
-        if (!processNextFrame){
-            Mat mRgba = inputFrame.rgba();
-            leftMineralMat.create(rgba.size(), 0);
-            midMineralMat.create(rgba.size(), 0);
-            rightMineralMat.create(rgba.size(), 0);
+        if (processNextFrame){
 
-            Rect leftMineral = new Rect(new Point(255, 0), new Point (555, 50));
-            Rect rightMineral = new Rect(new Point(810, 0), new Point (1100, 50));
-            Rect midMineral = new Rect(new Point(1365, 0), new Point (1665, 50));
+            Rect leftMineral = new Rect(new Point(255/2, 0), new Point (555/2, 50));
+            Rect rightMineral = new Rect(new Point(810/2, 0), new Point (1100/2, 50));
+            Rect midMineral = new Rect(new Point(1365/2, 0), new Point (1665/2, 50));
+
+            Mat leftMineralMat = new Mat(rgba,leftMineral);
+            Mat midMineralMat = new Mat(rgba,midMineral);
+            Mat rightMineralMat = new Mat(rgba,rightMineral);
 
             rgba.submat(leftMineral).copyTo(leftMineralMat);
             rgba.submat(midMineral).copyTo(midMineralMat);
@@ -527,6 +527,11 @@ public class ImageProcessor {
             Scalar rightMineralMean = Core.mean(rightMineralMat);
             rightMineralBlue = rightMineralMean.val[2];
 
+            Imgproc.rectangle(rgba, new Point(255/2, 0), new Point (555/2, 250), new Scalar(255, 255, 255));
+            Imgproc.rectangle(rgba, new Point(810/2, 0), new Point (1100/2, 250), new Scalar(255, 255, 255));
+            Imgproc.rectangle(rgba, new Point(1365/2, 0), new Point (1665/2, 250), new Scalar(255, 255, 255));
+
+            leftMineralMat.release();
             return rgba;
         }
         frameReady = true;

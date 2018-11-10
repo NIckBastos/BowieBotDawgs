@@ -27,8 +27,11 @@ package org.firstinspires.ftc.teamcode;/* Copyright (c) 2017 FIRST. All rights r
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotor.RunMode;
 import com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -71,6 +74,7 @@ public class BotDawg
     public DcMotor scoopMotor = null;
     public Servo leftLiftServo = null;
     public Servo rightLiftServo = null;
+    BNO055IMU imu;
     public static final double MID_SERVO       =  0.5 ;
     public static final double ARM_UP_POWER    =  0.45 ;
     public static final double ARM_DOWN_POWER  = -0.45 ;
@@ -97,6 +101,24 @@ public class BotDawg
           scoopMotor = hardwareMap.dcMotor.get("scoopMotor");
           leftLiftServo = hardwareMap.servo.get("leftLiftServo");
           rightLiftServo = hardwareMap.servo.get("rightLiftServo");
+          imu = hardwareMap.get(BNO055IMU.class, "imu");
+
+
+
+      // Set up the parameters with which we will use our IMU. Note that integration
+      // algorithm here just reports accelerations to the logcat log; it doesn't actually
+      // provide positional information.
+      BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+      parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+      parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+      parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+      parameters.loggingEnabled      = true;
+      parameters.loggingTag          = "IMU";
+      parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+
+
+      // Initialize sensor parameters
+      imu.initialize(parameters);
 
 
         //Assigning directions of motors
@@ -106,6 +128,8 @@ public class BotDawg
         rightFrontMotor.setDirection(DcMotor.Direction.REVERSE);
         rightBackMotor.setDirection(DcMotor.Direction.REVERSE);
 
+
+
 //        leftFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
       leftFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
       leftBackMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -113,8 +137,8 @@ public class BotDawg
       rightBackMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
       liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
       scoopMotor.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
-      scoopMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-      scoopMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+      scoopMotor.setMode(RunMode.STOP_AND_RESET_ENCODER);
+      scoopMotor.setMode(RunMode.RUN_TO_POSITION);
 
 
     }

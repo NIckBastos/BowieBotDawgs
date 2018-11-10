@@ -371,27 +371,28 @@ public class AutoDepot extends OpenCVLinearOpModeBase {
     }
 
 public void turn(double degrees) {
-  while (opModeIsActive()) {
-    degrees = degrees + angles.firstAngle;
-    if ((angles.firstAngle != degrees) && (degrees < 0)) {
-      robot.leftFrontMotor.setPower(-TURN_SPEED);
-      robot.rightFrontMotor.setPower(Math.abs(TURN_SPEED));
-      robot.leftBackMotor.setPower(Math.abs(-TURN_SPEED));
-      robot.rightBackMotor.setPower(Math.abs(TURN_SPEED));
-    }else if((angles.firstAngle != degrees) && (degrees > 0)){
-      robot.leftFrontMotor.setPower(TURN_SPEED);
-      robot.rightFrontMotor.setPower(Math.abs(-TURN_SPEED));
-      robot.leftBackMotor.setPower(Math.abs(TURN_SPEED));
-      robot.rightBackMotor.setPower(Math.abs(-TURN_SPEED));
-    }else{
-      robot.leftFrontMotor.setPower(0);
-      robot.rightFrontMotor.setPower(Math.abs(0));
-      robot.leftBackMotor.setPower(Math.abs(0));
-      robot.rightBackMotor.setPower(Math.abs(0));
-
+   double targer = degrees + angles.firstAngle;
+   double direction = Math.signum(degrees);
+   boolean done = false;
+  while (opModeIsActive() && !done ) {
+    telemetry.addData("first angle", angles.firstAngle);
+    telemetry.update();
+    robot.leftFrontMotor.setPower(-direction * TURN_SPEED);
+    robot.rightFrontMotor.setPower(direction * TURN_SPEED);
+    robot.leftBackMotor.setPower(direction * TURN_SPEED);
+    robot.rightBackMotor.setPower(-direction * TURN_SPEED);
+    if(direction < 0){
+      done = angles.firstAngle < targer;
+    }else if(direction > 0) {
+      done = angles.firstAngle > targer;
     }
   }
-}
+  robot.leftFrontMotor.setPower(0);
+  robot.rightFrontMotor.setPower(Math.abs(0));
+  robot.leftBackMotor.setPower(Math.abs(0));
+  robot.rightBackMotor.setPower(Math.abs(0));
+  }
+
 
 
 

@@ -1,12 +1,13 @@
 package org.firstinspires.ftc.teamcode;
 
 import android.content.Context;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 /**
  * Created by Vince on 11/9/2016.
  */
 
-//@Autonomous(name="Test Beacon Detector", group="Autonomous")
+@Autonomous(name="Test Beacon Detector", group="Autonomous")
 
 public class TestBeaconDetector extends OpenCVLinearOpModeBase {
     //Declare data logger
@@ -17,8 +18,7 @@ public class TestBeaconDetector extends OpenCVLinearOpModeBase {
 
     public long startTime; // Define robot start time
     public int heading1 = 46; // Turn towards blue line (changed 10/8)
-    public TestBeaconDetector(AllianceColor color){
-        allianceColor = color;
+    public TestBeaconDetector(){
     }
 
     @Override
@@ -32,7 +32,7 @@ public class TestBeaconDetector extends OpenCVLinearOpModeBase {
         //Setup robot motor
 //        motorController = new MotorMethods(hardwareMap);
         //Setup data logger
-        dl = new DataLogger("AutoBlue1");
+
         waitForStart();
         startTime = System.currentTimeMillis();
 
