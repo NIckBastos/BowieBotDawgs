@@ -290,6 +290,7 @@ public class AutoLift extends OpenCVLinearOpModeBase {
 
     public void defaultPath(){
         while(opModeIsActive()) {
+            robot.leftLiftServo.setPosition(0.7);
             encoderLift(Lift_Speed, 5, 2);
 
             robot.leftFrontMotor.setPower(0);

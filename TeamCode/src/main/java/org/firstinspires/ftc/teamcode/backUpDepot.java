@@ -138,8 +138,8 @@ public class backUpDepot extends OpenCVLinearOpModeBase {
 		// Start the logging of measured acceleration
 		robot.imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
 
-//		defaultPath();
-		turn(90);
+		defaultPath();
+
 		while(opModeIsActive()){
 			telemetry.update();
 		}
@@ -227,6 +227,49 @@ public class backUpDepot extends OpenCVLinearOpModeBase {
 	}
 
 
+	public void encoderLift(double speed,
+							double yInches,
+							double timeoutS) {
+		int newYTarget;
+
+
+		// Ensure that the opmode is still active
+		if (opModeIsActive()) {
+
+			// Determine new target position, and pass to motor controller
+			newYTarget = robot.liftMotor.getCurrentPosition() + (int)(yInches * COUNTS_PER_INCH);
+
+
+			robot.liftMotor.setTargetPosition(newYTarget);
+
+			// Turn On RUN_TO_POSITION
+			robot.liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+
+			// reset the timeout time and start motion.
+			runtime.reset();
+			robot.liftMotor.setPower(Math.abs(speed));
+
+
+			while (opModeIsActive() &&
+					(runtime.seconds() < timeoutS) &&
+					(robot.liftMotor.isBusy())) {
+
+				// Display it for the driver.
+				telemetry.addData("Path2",  "Running at %7d :%7d",
+						robot.liftMotor.getCurrentPosition());
+				telemetry.update();
+			}
+			// Stop all motion;
+			robot.liftMotor.setPower(0);
+
+			// Turn off RUN_TO_POSITION
+			robot.liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+		}
+	}
+
+
 	public void turn(float degrees) {
 		Orientation angles   = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 		float degreesMoved = 0;
@@ -277,6 +320,8 @@ public class backUpDepot extends OpenCVLinearOpModeBase {
 
 	public void defaultPath(){
 		while(opModeIsActive()) {
+			robot.leftLiftServo.setPosition(0.7);
+			encoderLift(Lift_Speed,5,2);
 			encoderDrive(DRIVE_SPEED,24,24,2);
 			dropMarker();
 			turn(110);

@@ -69,8 +69,7 @@ public class throttleTestMinimal extends OpMode {
 
         if(gamepad1.right_bumper && !gamepad1.left_bumper){
             robot.leftLiftServo.setPosition(0.7);
-            robot.rightLiftServo.setPosition(0.25);
-        }
+            robot.rightLiftServo.setPosition(0.25);        }
 
 
 
