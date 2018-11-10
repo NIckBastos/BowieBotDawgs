@@ -318,15 +318,16 @@ public class backUpCrater extends OpenCVLinearOpModeBase {
 
 	public void defaultPath(){
 		while(opModeIsActive()) {
-			encoderLift(Lift_Speed, -5,5);
-			encoderDrive(DRIVE_SPEED, 24,24, 2);
+//			robot.leftLiftServo.setPosition(0.7);
+//			encoderLift(Lift_Speed, -5,2);
+			encoderDrive(DRIVE_SPEED, 24,24, 5);
 			turn(90);
-			encoderDrive(DRIVE_SPEED, 18,18, 	2);
+			encoderDrive(DRIVE_SPEED, 18,18, 	5);
 			turn(40);
-			encoderDrive(DRIVE_SPEED, 20,20, 2);
+			encoderDrive(DRIVE_SPEED, 20,20, 5);
 			dropMarker();
 			turn(180);
-			encoderDrive(DRIVE_SPEED, 96,96, 2);
+			encoderDrive(DRIVE_SPEED, 96,96, 5);
 		}
 	}
 

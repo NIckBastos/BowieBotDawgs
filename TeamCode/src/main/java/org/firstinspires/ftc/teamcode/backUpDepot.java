@@ -138,8 +138,8 @@ public class backUpDepot extends OpenCVLinearOpModeBase {
 		// Start the logging of measured acceleration
 		robot.imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
 
-//		defaultPath();
-		turn(90);
+		defaultPath();
+
 		while(opModeIsActive()){
 			telemetry.update();
 		}
@@ -320,12 +320,12 @@ public class backUpDepot extends OpenCVLinearOpModeBase {
 
 	public void defaultPath(){
 		while(opModeIsActive()) {
-			robot.leftLiftServo.setPosition(0.7);
-			encoderLift(Lift_Speed,5,2);
-			encoderDrive(DRIVE_SPEED,24,24,2);
+//			robot.leftLiftServo.setPosition(0.7);
+//			encoderLift(Lift_Speed,5,2);
+			encoderDrive(DRIVE_SPEED,24,24,5);
 			dropMarker();
-			turn(110);
-			encoderDrive(DRIVE_SPEED, 48, 48, 2);
+//			turn(110);
+			encoderDrive(DRIVE_SPEED, 48, 48, 5);
 		}
 	}
 
