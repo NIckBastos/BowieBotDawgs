@@ -139,9 +139,6 @@ public class BotDawg
       scoopMotor.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
       scoopMotor.setMode(RunMode.STOP_AND_RESET_ENCODER);
       scoopMotor.setMode(RunMode.RUN_TO_POSITION);
-      liftMotor.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
-      liftMotor.setMode(RunMode.STOP_AND_RESET_ENCODER);
-      liftMotor.setMode(RunMode.RUN_TO_POSITION);
 
 
     }
