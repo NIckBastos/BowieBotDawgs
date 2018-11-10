@@ -85,378 +85,322 @@ import java.util.Locale;
 //@Disabled
 public class AutoDepot extends OpenCVLinearOpModeBase {
 
-    // The IMU sensor object
-    BNO055IMU imu;
+  // The IMU sensor object
+  BNO055IMU imu;
 
-    // State used for updating telemetry
-    Orientation angles;
-    Acceleration gravity;
+  // State used for updating telemetry
+  Orientation angles;
+  Acceleration gravity;
 
-    /* Declare OpMode members. */
-    private BotDawg robot = new BotDawg();   // Use a Pushbot's hardware
-    private ElapsedTime runtime = new ElapsedTime();
+  /* Declare OpMode members. */
+  private BotDawg robot = new BotDawg();   // Use a Pushbot's hardware
+  private ElapsedTime runtime = new ElapsedTime();
 
-    double leftBlueValue = imageProcessor.leftMineralBlue;
-    double midBlueValue = imageProcessor.midMineralBlue;
-    double rightBlueValue = imageProcessor.rightMineralBlue;
-    double blueMin = 0.0;
-    private static final double     COUNTS_PER_MOTOR_REV    = 1440 ;    // eg: TETRIX Motor Encoder
-    private static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // This is < 1.0 if geared UP
-    private static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
-    private static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
-            (WHEEL_DIAMETER_INCHES * 3.1415);
-    static final double     DRIVE_SPEED             = 0.7;
-    static final double     TURN_SPEED              = 0.5;
-    static final double     Lift_Speed              = 0.4;
+  double leftBlueValue = imageProcessor.leftMineralBlue;
+  double midBlueValue = imageProcessor.midMineralBlue;
+  double rightBlueValue = imageProcessor.rightMineralBlue;
+  double blueMin = 0.0;
+  private static final double     COUNTS_PER_MOTOR_REV    = 1440 ;    // eg: TETRIX Motor Encoder
+  private static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // This is < 1.0 if geared UP
+  private static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
+  private static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
+      (WHEEL_DIAMETER_INCHES * 3.1415);
+  static final double     DRIVE_SPEED             = 0.7;
+  static final double     TURN_SPEED              = 0.5;
+  static final double     Lift_Speed              = 0.4;
 
-    public static double min(double a, double b, double c) {
-        return Math.min(Math.min(a, b), c);
-    }
-    @Override
-    public void runOpMode(){
-        robot.init(hardwareMap);
+  public static double min(double a, double b, double c) {
+    return Math.min(Math.min(a, b), c);
+  }
+  @Override
+  public void runOpMode(){
+    robot.init(hardwareMap);
 
-        // Send telemetry message to signify robot waiting;
-        telemetry.addData("Status", "Resetting Encoders");
-        telemetry.update();
-        // Send telemetry message to indicate successful Encoder reset
-        telemetry.addData("Path0",  "Starting at %7d :%7d",
-                robot.leftFrontMotor.getCurrentPosition(),
-                robot.rightFrontMotor.getCurrentPosition(),
-                robot.leftBackMotor.getCurrentPosition(),
-                robot.rightBackMotor.getCurrentPosition());
-        telemetry.update();
-
-
-
-        // Set up the parameters with which we will use our IMU. Note that integration
-        // algorithm here just reports accelerations to the logcat log; it doesn't actually
-        // provide positional information.
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
-        parameters.loggingEnabled      = true;
-        parameters.loggingTag          = "IMU";
-        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
-
-
-        // Initialize sensor parameters
-        imu.initialize(parameters);
-
-        // Wait for the game to start (driver presses PLAY)
-        waitForStart();
-        telemetry.addData("Path", "Complete");
-        telemetry.update();
-        Context context = hardwareMap.appContext;
-
-        cameraManager.initialize(context, true, this);
-        imageProcessor.initialize();
-
-        // Set up our telemetry dashboard
-        composeTelemetry();
-
-        waitForStart();
-
-        // Start the logging of measured acceleration
-        imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
-
-        while (opModeIsActive()) {
-            imageProcessor.takePicture();
-            while(opModeIsActive() && !imageProcessor.isFrameReady()){
-                idle();
-            }
-
-        }
-
-        cameraManager.stop(context);
-        imageProcessor.stop();
-
-        blueMin = min(leftBlueValue, midBlueValue, rightBlueValue);
-        //Cant use a switch statement because these are floating points.
-        if(blueMin == leftBlueValue){
-            //Run method left
-            leftPath();
-        }else if(blueMin == midBlueValue){
-            //Run method center
-            centerPath();
-        }else if(blueMin == rightBlueValue){
-            //Run method right
-            rightPath();
-        }else{
-            //run method default
-            defaultPath();
-        }
-    }
-
-    /*
-     *  Method to perfmorm a relative move, based on encoder counts.
-     *  Encoders are not reset as the move is based on the current position.
-     *  Move will stop if any of three conditions occur:
-     *  1) Move gets to the desired position
-     *  2) Move runs out of time
-     *  3) Driver stops the opmode running.
-     */
-    void composeTelemetry() {
-
-        // At the beginning of each telemetry update, grab a bunch of data
-        // from the IMU that we will then display in separate lines.
-        telemetry.addAction(new Runnable() { @Override public void run()
-        {
-            // Acquiring the angles is relatively expensive; we don't want
-            // to do that in each of the three items that need that info, as that's
-            // three times the necessary expense.
-            angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-            gravity  = imu.getGravity();
-        }
-        });
-
-        telemetry.addLine()
-                .addData("status", new Func<String>() {
-                    @Override public String value() {
-                        return imu.getSystemStatus().toShortString();
-                    }
-                })
-                .addData("calib", new Func<String>() {
-                    @Override public String value() {
-                        return imu.getCalibrationStatus().toString();
-                    }
-                });
-
-        telemetry.addLine()
-                .addData("heading", new Func<String>() {
-                    @Override public String value() {
-                        return formatAngle(angles.angleUnit, angles.firstAngle);
-                    }
-                })
-                .addData("roll", new Func<String>() {
-                    @Override public String value() {
-                        return formatAngle(angles.angleUnit, angles.secondAngle);
-                    }
-                })
-                .addData("pitch", new Func<String>() {
-                    @Override public String value() {
-                        return formatAngle(angles.angleUnit, angles.thirdAngle);
-                    }
-                });
-
-        telemetry.addLine()
-                .addData("grvty", new Func<String>() {
-                    @Override public String value() {
-                        return gravity.toString();
-                    }
-                })
-                .addData("mag", new Func<String>() {
-                    @Override public String value() {
-                        return String.format(Locale.getDefault(), "%.3f",
-                                Math.sqrt(gravity.xAccel*gravity.xAccel
-                                        + gravity.yAccel*gravity.yAccel
-                                        + gravity.zAccel*gravity.zAccel));
-                    }
-                });
-    }
-
-    String formatAngle(AngleUnit angleUnit, double angle) {
-        return formatDegrees(AngleUnit.DEGREES.fromUnit(angleUnit, angle));
-    }
-
-    String formatDegrees(double degrees){
-        return String.format(Locale.getDefault(), "%.1f", AngleUnit.DEGREES.normalize(degrees));
-    }
-
-    public void encoderDrive(double speed,
-            double leftInches, double rightInches,
-            double timeoutS) {
-                int newLeftFrontTarget;
-                int newRightFrontTarget;
-                int newLeftBackTarget;
-                int newRightBackTarget;
-
-                // Ensure that the opmode is still active
-                if (opModeIsActive()) {
-
-                    // Determine new target position, and pass to motor controller
-                    newLeftFrontTarget = robot.leftFrontMotor.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
-                    newRightFrontTarget = robot.rightFrontMotor.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
-                    newLeftBackTarget = robot.leftBackMotor.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
-                    newRightBackTarget = robot.rightBackMotor.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
-
-                    robot.leftFrontMotor.setTargetPosition(newLeftFrontTarget);
-                    robot.rightFrontMotor.setTargetPosition(newRightFrontTarget);
-                    robot.leftBackMotor.setTargetPosition(newLeftBackTarget);
-                    robot.rightBackMotor.setTargetPosition(newRightBackTarget);
-
-                    // Turn On RUN_TO_POSITION
-                    robot.leftFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    robot.rightFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    robot.leftBackMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    robot.rightBackMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            // reset the timeout time and start motion.
-            runtime.reset();
-            robot.leftFrontMotor.setPower(Math.abs(speed));
-            robot.rightFrontMotor.setPower(Math.abs(speed));
-            robot.leftBackMotor.setPower(Math.abs(speed));
-            robot.rightBackMotor.setPower(Math.abs(speed));
-
-            // keep looping while we are still active, and there is time left, and both motors are running.
-            // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
-            // its target position, the motion will stop.  This is "safer" in the event that the robot will
-            // always end the motion as soon as possible.
-            // However, if you require that BOTH motors have finished their moves before the robot continues
-            // onto the next step, use (isBusy() || isBusy()) in the loop test.
-            while (opModeIsActive() &&
-                    (runtime.seconds() < timeoutS) &&
-                    (robot.leftFrontMotor.isBusy() && robot.rightFrontMotor.isBusy())) {
-
-                // Display it for the driver.
-                telemetry.addData("Path2",  "Running at %7d :%7d",
-                        robot.leftFrontMotor.getCurrentPosition(),
-                        robot.rightFrontMotor.getCurrentPosition());
-                telemetry.update();
-            }
-            // Stop all motion;
-            robot.leftFrontMotor.setPower(0);
-            robot.rightFrontMotor.setPower(0);
-            robot.leftBackMotor.setPower(0);
-            robot.rightBackMotor.setPower(0);
-            // Turn off RUN_TO_POSITION
-            robot.leftFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.rightFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-            //  sleep(250);   // optional pause after each move
-        }
-    }
-
-    public void encoderLift(double speed,
-                             double yInches,
-                             double timeoutS) {
-        int newYTarget;
-
-
-        // Ensure that the opmode is still active
-        if (opModeIsActive()) {
-
-            // Determine new target position, and pass to motor controller
-            newYTarget = robot.liftMotor.getCurrentPosition() + (int)(yInches * COUNTS_PER_INCH);
-
-
-            robot.liftMotor.setTargetPosition(newYTarget);
-
-            // Turn On RUN_TO_POSITION
-            robot.liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-
-            // reset the timeout time and start motion.
-            runtime.reset();
-            robot.liftMotor.setPower(Math.abs(speed));
-
-
-            while (opModeIsActive() &&
-                    (runtime.seconds() < timeoutS) &&
-                    (robot.liftMotor.isBusy())) {
-
-                // Display it for the driver.
-                telemetry.addData("Path2",  "Running at %7d :%7d",
-                        robot.liftMotor.getCurrentPosition());
-                telemetry.update();
-            }
-            // Stop all motion;
-            robot.liftMotor.setPower(0);
-
-            // Turn off RUN_TO_POSITION
-            robot.liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        }
-    }
-
-public void turn(double degrees) {
-   double targer = degrees + angles.firstAngle;
-   double direction = Math.signum(degrees);
-   boolean done = false;
-  while (opModeIsActive() && !done ) {
-    telemetry.addData("first angle", angles.firstAngle);
+    // Send telemetry message to signify robot waiting;
+    telemetry.addData("Status", "Resetting Encoders");
     telemetry.update();
-    robot.leftFrontMotor.setPower(-direction * TURN_SPEED);
-    robot.rightFrontMotor.setPower(direction * TURN_SPEED);
-    robot.leftBackMotor.setPower(direction * TURN_SPEED);
-    robot.rightBackMotor.setPower(-direction * TURN_SPEED);
-    if(direction < 0){
-      done = angles.firstAngle < targer;
-    }else if(direction > 0) {
-      done = angles.firstAngle > targer;
+    // Send telemetry message to indicate successful Encoder reset
+    telemetry.addData("Path0",  "Starting at %7d :%7d",
+        robot.leftFrontMotor.getCurrentPosition(),
+        robot.rightFrontMotor.getCurrentPosition(),
+        robot.leftBackMotor.getCurrentPosition(),
+        robot.rightBackMotor.getCurrentPosition());
+    telemetry.update();
+
+
+
+
+    // Wait for the game to start (driver presses PLAY)
+    waitForStart();
+    telemetry.addData("Path", "Complete");
+    telemetry.update();
+    Context context = hardwareMap.appContext;
+
+    cameraManager.initialize(context, true, this);
+    imageProcessor.initialize();
+
+    waitForStart();
+
+    // Start the logging of measured acceleration
+    imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
+
+    while (opModeIsActive()) {
+      imageProcessor.takePicture();
+      while(opModeIsActive() && !imageProcessor.isFrameReady()){
+        idle();
+      }
+
+    }
+
+    cameraManager.stop(context);
+    imageProcessor.stop();
+
+    blueMin = min(leftBlueValue, midBlueValue, rightBlueValue);
+    //Cant use a switch statement because these are floating points.
+    if(blueMin == leftBlueValue){
+      //Run method left
+      leftPath();
+    }else if(blueMin == midBlueValue){
+      //Run method center
+      centerPath();
+    }else if(blueMin == rightBlueValue){
+      //Run method right
+      rightPath();
+    }else{
+      //run method default
+      defaultPath();
     }
   }
-  robot.leftFrontMotor.setPower(0);
-  robot.rightFrontMotor.setPower(Math.abs(0));
-  robot.leftBackMotor.setPower(Math.abs(0));
-  robot.rightBackMotor.setPower(Math.abs(0));
+
+  /*
+   *  Method to perfmorm a relative move, based on encoder counts.
+   *  Encoders are not reset as the move is based on the current position.
+   *  Move will stop if any of three conditions occur:
+   *  1) Move gets to the desired position
+   *  2) Move runs out of time
+   *  3) Driver stops the opmode running.
+   */
+
+
+  String formatAngle(AngleUnit angleUnit, double angle) {
+    return formatDegrees(AngleUnit.DEGREES.fromUnit(angleUnit, angle));
+  }
+
+  String formatDegrees(double degrees){
+    return String.format(Locale.getDefault(), "%.1f", AngleUnit.DEGREES.normalize(degrees));
+  }
+
+  public void encoderDrive(double speed,
+      double leftInches, double rightInches,
+      double timeoutS) {
+    int newLeftFrontTarget;
+    int newRightFrontTarget;
+    int newLeftBackTarget;
+    int newRightBackTarget;
+
+    // Ensure that the opmode is still active
+    if (opModeIsActive()) {
+
+      // Determine new target position, and pass to motor controller
+      newLeftFrontTarget = robot.leftFrontMotor.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
+      newRightFrontTarget = robot.rightFrontMotor.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
+      newLeftBackTarget = robot.leftBackMotor.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
+      newRightBackTarget = robot.rightBackMotor.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
+
+      robot.leftFrontMotor.setTargetPosition(newLeftFrontTarget);
+      robot.rightFrontMotor.setTargetPosition(newRightFrontTarget);
+      robot.leftBackMotor.setTargetPosition(newLeftBackTarget);
+      robot.rightBackMotor.setTargetPosition(newRightBackTarget);
+
+      // Turn On RUN_TO_POSITION
+      robot.leftFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+      robot.rightFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+      robot.leftBackMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+      robot.rightBackMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+      // reset the timeout time and start motion.
+      runtime.reset();
+      robot.leftFrontMotor.setPower(Math.abs(speed));
+      robot.rightFrontMotor.setPower(Math.abs(speed));
+      robot.leftBackMotor.setPower(Math.abs(speed));
+      robot.rightBackMotor.setPower(Math.abs(speed));
+
+      // keep looping while we are still active, and there is time left, and both motors are running.
+      // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
+      // its target position, the motion will stop.  This is "safer" in the event that the robot will
+      // always end the motion as soon as possible.
+      // However, if you require that BOTH motors have finished their moves before the robot continues
+      // onto the next step, use (isBusy() || isBusy()) in the loop test.
+      while (opModeIsActive() &&
+          (runtime.seconds() < timeoutS) &&
+          (robot.leftFrontMotor.isBusy() && robot.rightFrontMotor.isBusy())) {
+
+        // Display it for the driver.
+        telemetry.addData("Path2",  "Running at %7d :%7d",
+            robot.leftFrontMotor.getCurrentPosition(),
+            robot.rightFrontMotor.getCurrentPosition());
+        telemetry.update();
+      }
+      // Stop all motion;
+      robot.leftFrontMotor.setPower(0);
+      robot.rightFrontMotor.setPower(0);
+      robot.leftBackMotor.setPower(0);
+      robot.rightBackMotor.setPower(0);
+      // Turn off RUN_TO_POSITION
+      robot.leftFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+      robot.rightFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+      //  sleep(250);   // optional pause after each move
+    }
   }
 
 
+  public void dropMarker(){
+    robot.scoopMotor.setPower(1);
+    robot.scoopMotor.setTargetPosition(-72);
+    sleep(1500);
+    robot.scoopMotor.setTargetPosition(0);
+    sleep(1500);
+
+  }
+  public void encoderLift(double speed,
+      double yInches,
+      double timeoutS) {
+    int newYTarget;
 
 
-    // Look at AutonomousSudo text file for more info abouut these 3 methods
-    public void leftPath(){
-        while(opModeIsActive()) {
-            encoderLift(Lift_Speed, 5, 2);
-            //Turn X Degrees??????????????//
+    // Ensure that the opmode is still active
+    if (opModeIsActive()) {
 
-            encoderDrive(DRIVE_SPEED, 3.1, 3.1, 2);
+      // Determine new target position, and pass to motor controller
+      newYTarget = robot.liftMotor.getCurrentPosition() + (int)(yInches * COUNTS_PER_INCH);
 
-            //Turn -X Degrees????????????//
 
-            encoderDrive(DRIVE_SPEED, 3.1, 3.1, 2);
+      robot.liftMotor.setTargetPosition(newYTarget);
 
-            robot.markerServo.setPosition(1.0);
+      // Turn On RUN_TO_POSITION
+      robot.liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            //Turn 225 Degrees??????????????//
 
-            encoderDrive(DRIVE_SPEED, 8, 8, 6.0);
-        }
+      // reset the timeout time and start motion.
+      runtime.reset();
+      robot.liftMotor.setPower(Math.abs(speed));
+
+
+      while (opModeIsActive() &&
+          (runtime.seconds() < timeoutS) &&
+          (robot.liftMotor.isBusy())) {
+
+        // Display it for the driver.
+        telemetry.addData("Path2",  "Running at %7d :%7d",
+            robot.liftMotor.getCurrentPosition());
+        telemetry.update();
+      }
+      // Stop all motion;
+      robot.liftMotor.setPower(0);
+
+      // Turn off RUN_TO_POSITION
+      robot.liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
     }
+  }
 
-    public void centerPath(){
-        while(opModeIsActive()) {
-            encoderLift(Lift_Speed, 5, 2);
-            encoderDrive(DRIVE_SPEED, 2, 2, 1.5);
-            robot.markerServo.setPosition(1.0);
+  public void turn(float degrees) {
+    Orientation angles   = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+    float degreesMoved = 0;
+    float direction = Math.signum(degrees);
+    boolean done = false;
+    float lastAngle = angles.firstAngle;
+    while (opModeIsActive() && !done ) {
+      angles   = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+      telemetry.addData("first angle", angles.firstAngle);
+      telemetry.addData("target", degrees);
+      telemetry.update();
+      robot.leftFrontMotor.setPower(direction * TURN_SPEED);
+      robot.rightFrontMotor.setPower(-direction * TURN_SPEED);
+      robot.leftBackMotor.setPower(-direction * TURN_SPEED);
+      robot.rightBackMotor.setPower(direction * TURN_SPEED);
 
-            //Turn 270 Degrees??????????????//
+      float currentAngle = angles.firstAngle;
+      if(currentAngle - lastAngle > 90 ){
+        currentAngle -= 360;
+      }else if(currentAngle - lastAngle < -90){
+        currentAngle += 360;
+      }
+      degreesMoved += currentAngle - lastAngle;
 
-            encoderDrive(DRIVE_SPEED, 8, 8, 6.0);
-        }
+      if(direction < 0){
+        done = degreesMoved < degrees;
+      }else if(direction > 0) {
+        done = degreesMoved > degrees;
+      }
+      lastAngle = currentAngle;
+
+    }		robot.leftFrontMotor.setPower(0);
+    robot.rightFrontMotor.setPower(Math.abs(0));
+    robot.leftBackMotor.setPower(Math.abs(0));
+    robot.rightBackMotor.setPower(Math.abs(0));
+  }
+
+  public void leftPath(){
+    while(opModeIsActive()) {
+      encoderLift(Lift_Speed, 5, 2);
+      //Turn X Degrees??????????????//
+
+      encoderDrive(DRIVE_SPEED, 3.1, 3.1, 2);
+
+      //Turn -X Degrees????????????//
+
+      encoderDrive(DRIVE_SPEED, 3.1, 3.1, 2);
+
+      robot.markerServo.setPosition(1.0);
+
+      //Turn 225 Degrees??????????????//
+
+      encoderDrive(DRIVE_SPEED, 8, 8, 6.0);
     }
+  }
 
-    public void rightPath(){
-        while(opModeIsActive()) {
-            encoderLift(Lift_Speed, 5, 2);
-            //Turn Y Degrees??????????????//
-            encoderDrive(DRIVE_SPEED, 3.1, 3.1, 2);
+  public void centerPath(){
+    while(opModeIsActive()) {
+      encoderLift(Lift_Speed, 5, 2);
+      encoderDrive(DRIVE_SPEED, 2, 2, 1.5);
+      robot.markerServo.setPosition(1.0);
 
-            //Turn -Y Degrees????????????//
+      //Turn 270 Degrees??????????????//
 
-            encoderDrive(DRIVE_SPEED, 3.1, 3.1, 2);
-            robot.markerServo.setPosition(1.0);
-
-            //Turn 315 Degrees??????????????//
-
-            encoderDrive(DRIVE_SPEED, 8, 8, 6.0);
-        }
+      encoderDrive(DRIVE_SPEED, 8, 8, 6.0);
     }
+  }
 
-    public void defaultPath(){
-        while(opModeIsActive()) {
-            encoderLift(Lift_Speed, 5, 2);
+  public void rightPath(){
+    while(opModeIsActive()) {
+      encoderLift(Lift_Speed, 5, 2);
+      //Turn Y Degrees??????????????//
+      encoderDrive(DRIVE_SPEED, 3.1, 3.1, 2);
 
-            robot.leftFrontMotor.setPower(0);
-            robot.leftBackMotor.setPower(0);
-            robot.rightFrontMotor.setPower(0);
-            robot.rightBackMotor.setPower(0);
-        }
+      //Turn -Y Degrees????????????//
+
+      encoderDrive(DRIVE_SPEED, 3.1, 3.1, 2);
+      robot.markerServo.setPosition(1.0);
+
+      //Turn 315 Degrees??????????????//
+
+      encoderDrive(DRIVE_SPEED, 8, 8, 6.0);
     }
+  }
 
-    String format(OpenGLMatrix transformationMatrix) {
-        return (transformationMatrix != null) ? transformationMatrix.formatAsTransform() : "null";
+  public void defaultPath(){
+    while(opModeIsActive()) {
+      encoderLift(Lift_Speed, 5, 2);
+
+      robot.leftFrontMotor.setPower(0);
+      robot.leftBackMotor.setPower(0);
+      robot.rightFrontMotor.setPower(0);
+      robot.rightBackMotor.setPower(0);
     }
+  }
+
+  String format(OpenGLMatrix transformationMatrix) {
+    return (transformationMatrix != null) ? transformationMatrix.formatAsTransform() : "null";
+  }
 }
