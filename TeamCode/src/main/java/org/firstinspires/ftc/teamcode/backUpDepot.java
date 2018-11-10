@@ -226,6 +226,47 @@ public class backUpDepot extends OpenCVLinearOpModeBase {
 		}
 	}
 
+	public void encoderLift(double speed,
+			double yInches,
+			double timeoutS) {
+		int newYTarget;
+
+
+		// Ensure that the opmode is still active
+		if (opModeIsActive()) {
+
+			// Determine new target position, and pass to motor controller
+			newYTarget = robot.liftMotor.getCurrentPosition() + (int)(yInches * COUNTS_PER_INCH);
+
+
+			robot.liftMotor.setTargetPosition(newYTarget);
+
+			// Turn On RUN_TO_POSITION
+			robot.liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+
+			// reset the timeout time and start motion.
+			runtime.reset();
+			robot.liftMotor.setPower(Math.abs(speed));
+
+
+			while (opModeIsActive() &&
+					(runtime.seconds() < timeoutS) &&
+					(robot.liftMotor.isBusy())) {
+
+				// Display it for the driver.
+				telemetry.addData("Path2",  "Running at %7d :%7d",
+						robot.liftMotor.getCurrentPosition());
+				telemetry.update();
+			}
+			// Stop all motion;
+			robot.liftMotor.setPower(0);
+
+			// Turn off RUN_TO_POSITION
+			robot.liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+		}
+	}
 
 	public void turn(float degrees) {
 		Orientation angles   = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
@@ -277,10 +318,10 @@ public class backUpDepot extends OpenCVLinearOpModeBase {
 
 	public void defaultPath(){
 		while(opModeIsActive()) {
-			encoderDrive(DRIVE_SPEED,24,24,2);
+			encoderDrive(DRIVE_SPEED,96,96,2);
 			dropMarker();
 			turn(110);
-			encoderDrive(DRIVE_SPEED, 48, 48, 2);
+			encoderDrive(DRIVE_SPEED, 96, 96, 2);
 		}
 	}
 

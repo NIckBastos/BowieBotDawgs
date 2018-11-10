@@ -34,7 +34,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import java.sql.Driver;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
@@ -87,10 +86,9 @@ import java.util.Locale;
 public class backUpCrater extends OpenCVLinearOpModeBase {
 
 	// The IMU sensor object
-	BNO055IMU imu;
+
 
 	// State used for updating telemetry
-	Orientation angles;
 	Acceleration gravity;
 
 	/* Declare OpMode members. */
@@ -117,30 +115,16 @@ public class backUpCrater extends OpenCVLinearOpModeBase {
 		telemetry.addData("Status", "Resetting Encoders");
 		telemetry.update();
 		// Send telemetry message to indicate successful Encoder reset
-		telemetry.addData("Path0",  "Starting at %7d :%7d",
-				robot.leftFrontMotor.getCurrentPosition(),
-				robot.rightFrontMotor.getCurrentPosition(),
-				robot.leftBackMotor.getCurrentPosition(),
-				robot.rightBackMotor.getCurrentPosition());
+
+//		telemetry.addData("Path0",  "Starting at %7d :%7d",
+//				robot.leftFrontMotor.getCurrentPosition(),
+//				robot.rightFrontMotor.getCurrentPosition(),
+//				robot.leftBackMotor.getCurrentPosition(),
+//				robot.rightBackMotor.getCurrentPosition()
 		telemetry.update();
 
-
-
-		// Set up the parameters with which we will use our IMU. Note that integration
-		// algorithm here just reports accelerations to the logcat log; it doesn't actually
-		// provide positional information.
-		BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-		parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-		parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-		parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
-		parameters.loggingEnabled      = true;
-		parameters.loggingTag          = "IMU";
-		parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
-
-
-		// Initialize sensor parameters
-		imu.initialize(parameters);
-
+		robot.scoopMotor.setPower(1);
+		robot.scoopMotor.setTargetPosition(0);
 		// Wait for the game to start (driver presses PLAY)
 		waitForStart();
 		telemetry.addData("Path", "Complete");
@@ -148,14 +132,18 @@ public class backUpCrater extends OpenCVLinearOpModeBase {
 		Context context = hardwareMap.appContext;
 
 		// Set up our telemetry dashboard
-		composeTelemetry();
+//		composeTelemetry();
 
 		waitForStart();
 
 		// Start the logging of measured acceleration
-		imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
+		robot.imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
 
+//		defaultPath();
 		defaultPath();
+		while(opModeIsActive()){
+			telemetry.update();
+		}
 	}
 
 	/*
@@ -166,64 +154,7 @@ public class backUpCrater extends OpenCVLinearOpModeBase {
 	 *  2) Move runs out of time
 	 *  3) Driver stops the opmode running.
 	 */
-	void composeTelemetry() {
 
-		// At the beginning of each telemetry update, grab a bunch of data
-		// from the IMU that we will then display in separate lines.
-		telemetry.addAction(new Runnable() { @Override public void run()
-		{
-			// Acquiring the angles is relatively expensive; we don't want
-			// to do that in each of the three items that need that info, as that's
-			// three times the necessary expense.
-			angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-			gravity  = imu.getGravity();
-		}
-		});
-
-		telemetry.addLine()
-				.addData("status", new Func<String>() {
-					@Override public String value() {
-						return imu.getSystemStatus().toShortString();
-					}
-				})
-				.addData("calib", new Func<String>() {
-					@Override public String value() {
-						return imu.getCalibrationStatus().toString();
-					}
-				});
-
-		telemetry.addLine()
-				.addData("heading", new Func<String>() {
-					@Override public String value() {
-						return formatAngle(angles.angleUnit, angles.firstAngle);
-					}
-				})
-				.addData("roll", new Func<String>() {
-					@Override public String value() {
-						return formatAngle(angles.angleUnit, angles.secondAngle);
-					}
-				})
-				.addData("pitch", new Func<String>() {
-					@Override public String value() {
-						return formatAngle(angles.angleUnit, angles.thirdAngle);
-					}
-				});
-
-		telemetry.addLine()
-				.addData("grvty", new Func<String>() {
-					@Override public String value() {
-						return gravity.toString();
-					}
-				})
-				.addData("mag", new Func<String>() {
-					@Override public String value() {
-						return String.format(Locale.getDefault(), "%.3f",
-								Math.sqrt(gravity.xAccel*gravity.xAccel
-										+ gravity.yAccel*gravity.yAccel
-										+ gravity.zAccel*gravity.zAccel));
-					}
-				});
-	}
 
 	String formatAngle(AngleUnit angleUnit, double angle) {
 		return formatDegrees(AngleUnit.DEGREES.fromUnit(angleUnit, angle));
@@ -278,10 +209,10 @@ public class backUpCrater extends OpenCVLinearOpModeBase {
 					(runtime.seconds() < timeoutS) &&
 					(robot.leftFrontMotor.isBusy() && robot.rightFrontMotor.isBusy())) {
 
-				// Display it for the driver.
-				telemetry.addData("Path2",  "Running at %7d :%7d",
-						robot.leftFrontMotor.getCurrentPosition(),
-						robot.rightFrontMotor.getCurrentPosition());
+//				// Display it for the driver.
+//				telemetry.addData("Path2",  "Running at %7d :%7d",
+//						robot.leftFrontMotor.getCurrentPosition(),
+//						robot.rightFrontMotor.getCurrentPosition());
 				telemetry.update();
 			}
 			// Stop all motion;
@@ -292,58 +223,113 @@ public class backUpCrater extends OpenCVLinearOpModeBase {
 			// Turn off RUN_TO_POSITION
 			robot.leftFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 			robot.rightFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
 			//  sleep(250);   // optional pause after each move
 		}
 	}
 
 
-	public void turn(float degrees) {
-		while (opModeIsActive()) {
-			degrees = degrees + angles.firstAngle;
-			if ((angles.firstAngle != degrees) && (degrees < 0)) {
-				robot.leftFrontMotor.setPower(-TURN_SPEED);
-				robot.rightFrontMotor.setPower(Math.abs(TURN_SPEED));
-				robot.leftBackMotor.setPower(Math.abs(-TURN_SPEED));
-				robot.rightBackMotor.setPower(Math.abs(TURN_SPEED));
-			}else if((angles.firstAngle != degrees) && (degrees > 0)){
-				robot.leftFrontMotor.setPower(TURN_SPEED);
-				robot.rightFrontMotor.setPower(Math.abs(-TURN_SPEED));
-				robot.leftBackMotor.setPower(Math.abs(TURN_SPEED));
-				robot.rightBackMotor.setPower(Math.abs(-TURN_SPEED));
-			}else{
-				robot.leftFrontMotor.setPower(0);
-				robot.rightFrontMotor.setPower(Math.abs(0));
-				robot.leftBackMotor.setPower(Math.abs(0));
-				robot.rightBackMotor.setPower(Math.abs(0));
-
-			}
-		}
-	}
 	public void dropMarker(){
-		robot.scoopMotor.setTargetPosition(288);
+		robot.scoopMotor.setPower(1);
+		robot.scoopMotor.setTargetPosition(-72);
 		sleep(1500);
 		robot.scoopMotor.setTargetPosition(0);
 		sleep(1500);
+
 	}
 
+	public void turn(float degrees) {
+		Orientation angles   = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+		float degreesMoved = 0;
+		float direction = Math.signum(degrees);
+		boolean done = false;
+		float lastAngle = angles.firstAngle;
+		while (opModeIsActive() && !done ) {
+			angles   = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+			telemetry.addData("first angle", angles.firstAngle);
+			telemetry.addData("target", degrees);
+			telemetry.update();
+			robot.leftFrontMotor.setPower(direction * TURN_SPEED);
+			robot.rightFrontMotor.setPower(-direction * TURN_SPEED);
+			robot.leftBackMotor.setPower(-direction * TURN_SPEED);
+			robot.rightBackMotor.setPower(direction * TURN_SPEED);
+
+			float currentAngle = angles.firstAngle;
+			if(currentAngle - lastAngle > 90 ){
+				currentAngle -= 360;
+			}else if(currentAngle - lastAngle < -90){
+				currentAngle += 360;
+			}
+			degreesMoved += currentAngle - lastAngle;
+
+			if(direction < 0){
+				done = degreesMoved < degrees;
+			}else if(direction > 0) {
+				done = degreesMoved > degrees;
+			}
+			lastAngle = currentAngle;
+
+		}		robot.leftFrontMotor.setPower(0);
+		robot.rightFrontMotor.setPower(Math.abs(0));
+		robot.leftBackMotor.setPower(Math.abs(0));
+		robot.rightBackMotor.setPower(Math.abs(0));
+	}
+	public void encoderLift(double speed,
+			double yInches,
+			double timeoutS) {
+		int newYTarget;
 
 
-	// Look at AutonomousSudo text file for more info about these 3 methods
+		// Ensure that the opmode is still active
+		if (opModeIsActive()) {
+
+			// Determine new target position, and pass to motor controller
+			newYTarget = robot.liftMotor.getCurrentPosition() + (int)(yInches * COUNTS_PER_INCH);
+
+
+			robot.liftMotor.setTargetPosition(newYTarget);
+
+			// Turn On RUN_TO_POSITION
+			robot.liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+
+			// reset the timeout time and start motion.
+			runtime.reset();
+			robot.liftMotor.setPower(Math.abs(speed));
+
+
+			while (opModeIsActive() &&
+					(runtime.seconds() < timeoutS) &&
+					(robot.liftMotor.isBusy())) {
+
+				// Display it for the driver.
+//				telemetry.addData("Path2",  "Running at %7d :%7d",
+//						robot.liftMotor.getCurrentPosition());
+				telemetry.update();
+			}
+			// Stop all motion;
+			robot.liftMotor.setPower(0);
+
+			// Turn off RUN_TO_POSITION
+			robot.liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+		}
+	}
 
 	public void defaultPath(){
 		while(opModeIsActive()) {
-			encoderDrive(DRIVE_SPEED, 12,12, 2);
+			encoderLift(Lift_Speed, -5,5);
+			encoderDrive(DRIVE_SPEED, 24,24, 2);
 			turn(90);
 			encoderDrive(DRIVE_SPEED, 18,18, 	2);
 			turn(40);
 			encoderDrive(DRIVE_SPEED, 20,20, 2);
 			dropMarker();
-			sleep(2000);
-			turn(90);
-			encoderDrive(DRIVE_SPEED, 48,48, 2);
+			turn(180);
+			encoderDrive(DRIVE_SPEED, 96,96, 2);
 		}
 	}
+
 
 	String format(OpenGLMatrix transformationMatrix) {
 		return (transformationMatrix != null) ? transformationMatrix.formatAsTransform() : "null";
