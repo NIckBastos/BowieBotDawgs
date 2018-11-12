@@ -123,8 +123,7 @@ public class BotDawg
 
         //Assigning directions of motors
 
-        leftFrontMotor.setDirection(DcMotor.Direction.REVERSE);
-        leftBackMotor.setDirection(DcMotor.Direction.REVERSE);
+
         rightFrontMotor.setDirection(DcMotor.Direction.REVERSE);
         rightBackMotor.setDirection(DcMotor.Direction.REVERSE);
 
