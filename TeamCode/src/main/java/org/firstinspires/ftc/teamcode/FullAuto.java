@@ -92,7 +92,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 public class FullAuto extends LinearOpMode {
 
   // The IMU sensor object
-  BNO055IMU imu;
+//  BNO055IMU imu;
 
   // State used for updating telemetry
   Orientation angles;
@@ -180,7 +180,7 @@ public class FullAuto extends LinearOpMode {
     Context context = hardwareMap.appContext;
 
     // Start the logging of measured acceleration
-    imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
+//    imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
 
 
     if (opModeIsActive()) {
@@ -212,13 +212,13 @@ public class FullAuto extends LinearOpMode {
               if (goldMineralX != -1 && silverMineral1X != -1 && silverMineral2X != -1) {
                 if (goldMineralX < silverMineral1X && goldMineralX < silverMineral2X) {
                   telemetry.addData("Gold Mineral Position", "Left");
-                  leftPath();
+//                  leftPath();
                 } else if (goldMineralX > silverMineral1X && goldMineralX > silverMineral2X) {
                   telemetry.addData("Gold Mineral Position", "Right");
-                  rightPath();
+//                  rightPath();
                 } else {
                   telemetry.addData("Gold Mineral Position", "Center");
-                  centerPath();
+//                  centerPath();
                 }
               }
             }
@@ -347,28 +347,28 @@ public class FullAuto extends LinearOpMode {
     }
   }
 
-  public void turn(float degrees) {
-    while (opModeIsActive()) {
-      degrees = degrees + angles.firstAngle;
-      if ((angles.firstAngle != degrees) && (degrees < 0)) {
-        robot.leftFrontMotor.setPower(-TURN_SPEED);
-        robot.rightFrontMotor.setPower(Math.abs(TURN_SPEED));
-        robot.leftBackMotor.setPower(Math.abs(-TURN_SPEED));
-        robot.rightBackMotor.setPower(Math.abs(TURN_SPEED));
-      }else if((angles.firstAngle != degrees) && (degrees > 0)){
-        robot.leftFrontMotor.setPower(TURN_SPEED);
-        robot.rightFrontMotor.setPower(Math.abs(-TURN_SPEED));
-        robot.leftBackMotor.setPower(Math.abs(TURN_SPEED));
-        robot.rightBackMotor.setPower(Math.abs(-TURN_SPEED));
-      }else{
-        robot.leftFrontMotor.setPower(0);
-        robot.rightFrontMotor.setPower(Math.abs(0));
-        robot.leftBackMotor.setPower(Math.abs(0));
-        robot.rightBackMotor.setPower(Math.abs(0));
-
-      }
-    }
-  }
+//  public void turn(float degrees) {
+//    while (opModeIsActive()) {
+//      degrees = degrees + angles.firstAngle;
+//      if ((angles.firstAngle != degrees) && (degrees < 0)) {
+//        robot.leftFrontMotor.setPower(-TURN_SPEED);
+//        robot.rightFrontMotor.setPower(Math.abs(TURN_SPEED));
+//        robot.leftBackMotor.setPower(Math.abs(-TURN_SPEED));
+//        robot.rightBackMotor.setPower(Math.abs(TURN_SPEED));
+//      }else if((angles.firstAngle != degrees) && (degrees > 0)){
+//        robot.leftFrontMotor.setPower(TURN_SPEED);
+//        robot.rightFrontMotor.setPower(Math.abs(-TURN_SPEED));
+//        robot.leftBackMotor.setPower(Math.abs(TURN_SPEED));
+//        robot.rightBackMotor.setPower(Math.abs(-TURN_SPEED));
+//      }else{
+//        robot.leftFrontMotor.setPower(0);
+//        robot.rightFrontMotor.setPower(Math.abs(0));
+//        robot.leftBackMotor.setPower(Math.abs(0));
+//        robot.rightBackMotor.setPower(Math.abs(0));
+//
+//      }
+//    }
+//  }
   public void dropMarker(){
     robot.scoopMotor.setTargetPosition(288);
     sleep(1500);
