@@ -50,7 +50,6 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
  * is explained below.
  */
 @TeleOp(name = "Concept: TensorFlow Object Detection", group = "Concept")
-@Disabled
 public class ConceptTensorFlowObjectDetection extends LinearOpMode {
     private static final String TFOD_MODEL_ASSET = "RoverRuckus.tflite";
     private static final String LABEL_GOLD_MINERAL = "Gold Mineral";
@@ -81,6 +80,8 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
      * Detection engine.
      */
     private TFObjectDetector tfod;
+
+
 
     @Override
     public void runOpMode() {
