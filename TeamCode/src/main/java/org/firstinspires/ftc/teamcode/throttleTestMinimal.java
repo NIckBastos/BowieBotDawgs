@@ -68,7 +68,9 @@ public class throttleTestMinimal extends OpMode {
             robot.leftLiftServo.setPosition(0.0);
             robot.rightLiftServo.setPosition(0.0);
         }
-
+        if(gamepad1.right_bumper){
+            robot.liftMotor.setPower(1);
+        }
 
 
         //I MIGHT NEED TO ADD JOYSTICK_DEADBAND
@@ -79,6 +81,6 @@ public class throttleTestMinimal extends OpMode {
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         telemetry.addData("Motors", "left (%.2f), right (%.2f)", gamepad2.left_stick_y, gamepad2.right_stick_y);
         telemetry.addData("Dpad up","Up, Down", gamepad1.dpad_up,gamepad1.dpad_down);
-        telemetry.addData("Scoop power", robot.scoopMotor.getPowerFloat());
+        telemetry.addData("Encoder Lift", robot.liftMotor.getCurrentPosition());
     }
 }

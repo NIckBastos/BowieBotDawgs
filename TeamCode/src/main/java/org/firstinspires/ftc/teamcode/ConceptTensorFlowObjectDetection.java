@@ -32,6 +32,7 @@ package org.firstinspires.ftc.teamcode;
 import android.content.Context;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -64,7 +65,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
-@TeleOp(name = "Concept: TensorFlow Object Detection", group = "Concept")
+@Autonomous(name = "Tensor flow test", group = "Concept")
 public class ConceptTensorFlowObjectDetection extends LinearOpMode {
     private static final String TFOD_MODEL_ASSET = "RoverRuckus.tflite";
     private static final String LABEL_GOLD_MINERAL = "Gold Mineral";
@@ -122,46 +123,49 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
   @Override
     public void runOpMode() {
 
-      robot.init(hardwareMap);
+    robot.init(hardwareMap);
 
-      // Send telemetry message to signify robot waiting;
-      telemetry.addData("Status", "Resetting Encoders");
-      telemetry.update();
-      // Send telemetry message to indicate successful Encoder reset
-      telemetry.addData("Path0",  "Starting at %7d :%7d",
-          robot.leftFrontMotor.getCurrentPosition(),
-          robot.rightFrontMotor.getCurrentPosition(),
-          robot.leftBackMotor.getCurrentPosition(),
-          robot.rightBackMotor.getCurrentPosition());
-      telemetry.update();
-
-
-
-      // Set up the parameters with which we will use our IMU. Note that integration
-      // algorithm here just reports accelerations to the logcat log; it doesn't actually
-      // provide positional information.
-      BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-      parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-      parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-      parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
-      parameters.loggingEnabled      = true;
-      parameters.loggingTag          = "IMU";
-      parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+    // Send telemetry message to signify robot waiting;
+    telemetry.addData("Status", "Resetting Encoders");
+    telemetry.update();
+    // Send telemetry message to indicate successful Encoder reset
+    telemetry.addData("Path0",  "Starting at %7d :%7d",
+        robot.leftFrontMotor.getCurrentPosition(),
+        robot.rightFrontMotor.getCurrentPosition(),
+        robot.leftBackMotor.getCurrentPosition(),
+        robot.rightBackMotor.getCurrentPosition());
+    telemetry.update();
 
 
-      // Initialize sensor parameters
-      imu.initialize(parameters);
 
-      // Wait for the game to start (driver presses PLAY)
-      waitForStart();
-      telemetry.addData("Path", "Complete");
-      telemetry.update();
-      Context context = hardwareMap.appContext;
-      imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
-      waitForStart();
-    // The TFObjectDetector uses the camera frames from the VuforiaLocalizer, so we create that
-        // first.
-        initVuforia();
+    // Set up the parameters with which we will use our IMU. Note that integration
+    // algorithm here just reports accelerations to the logcat log; it doesn't actually
+    // provide positional information.
+    BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+    parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+    parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+    parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+    parameters.loggingEnabled      = true;
+    parameters.loggingTag          = "IMU";
+    parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+
+
+    // Initialize sensor parameters
+    imu.initialize(parameters);
+
+    // Wait for the game to start (driver presses PLAY)
+    waitForStart();
+    telemetry.addData("Path", "Complete");
+    telemetry.update();
+
+
+    // Set up our telemetry dashboard
+    composeTelemetry();
+
+    waitForStart();
+
+    initVuforia();
+    imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
 
         if (ClassFactory.getInstance().canCreateTFObjectDetector()) {
             initTfod();
@@ -203,11 +207,14 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
                         if (goldMineralX != -1 && silverMineral1X != -1 && silverMineral2X != -1) {
                           if (goldMineralX < silverMineral1X && goldMineralX < silverMineral2X) {
                             telemetry.addData("Gold Mineral Position", "Left");
+                            encoderDrive(DRIVE_SPEED,10,10,10);
 
                           } else if (goldMineralX > silverMineral1X && goldMineralX > silverMineral2X) {
                             telemetry.addData("Gold Mineral Position", "Right");
+                            encoderDrive(DRIVE_SPEED,10,10,10);
                           } else {
                             telemetry.addData("Gold Mineral Position", "Center");
+                            encoderDrive(DRIVE_SPEED,10,10,10);
                           }
                         }
                       }
