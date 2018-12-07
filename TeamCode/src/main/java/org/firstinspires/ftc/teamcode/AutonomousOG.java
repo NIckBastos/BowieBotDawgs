@@ -211,13 +211,13 @@ public class AutonomousOG extends LinearOpMode {
               if (goldMineralX != -1 && silverMineral1X != -1 && silverMineral2X != -1) {
                 if (goldMineralX < silverMineral1X && goldMineralX < silverMineral2X) {
                   telemetry.addData("Gold Mineral Position", "Left");
-//                  leftPath();
+                  leftPath();
                 } else if (goldMineralX > silverMineral1X && goldMineralX > silverMineral2X) {
                   telemetry.addData("Gold Mineral Position", "Right");
-//                  rightPath();
+                  rightPath();
                 } else {
                   telemetry.addData("Gold Mineral Position", "Center");
-//                  centerPath();
+                  centerPath();
                 }
               }
             }
@@ -346,28 +346,40 @@ public class AutonomousOG extends LinearOpMode {
     }
   }
 
-//  public void turn(float degrees) {
-//    while (opModeIsActive()) {
-//      degrees = degrees + angles.firstAngle;
-//      if ((angles.firstAngle != degrees) && (degrees < 0)) {
-//        robot.leftFrontMotor.setPower(-TURN_SPEED);
-//        robot.rightFrontMotor.setPower(Math.abs(TURN_SPEED));
-//        robot.leftBackMotor.setPower(Math.abs(-TURN_SPEED));
-//        robot.rightBackMotor.setPower(Math.abs(TURN_SPEED));
-//      }else if((angles.firstAngle != degrees) && (degrees > 0)){
-//        robot.leftFrontMotor.setPower(TURN_SPEED);
-//        robot.rightFrontMotor.setPower(Math.abs(-TURN_SPEED));
-//        robot.leftBackMotor.setPower(Math.abs(TURN_SPEED));
-//        robot.rightBackMotor.setPower(Math.abs(-TURN_SPEED));
-//      }else{
-//        robot.leftFrontMotor.setPower(0);
-//        robot.rightFrontMotor.setPower(Math.abs(0));
-//        robot.leftBackMotor.setPower(Math.abs(0));
-//        robot.rightBackMotor.setPower(Math.abs(0));
-//
-//      }
-//    }
-//  }
+  public void turn(float degrees) {
+    Orientation angles   = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+    float degreesMoved = 0;
+    float direction = Math.signum(degrees);
+    boolean done = false;
+    float lastAngle = angles.firstAngle;
+    while (opModeIsActive() && !done ) {
+      angles   = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+      telemetry.addData("first angle", angles.firstAngle);
+      telemetry.addData("target", degrees);
+      telemetry.update();
+      robot.leftFrontMotor.setPower(direction * TURN_SPEED);
+      robot.rightFrontMotor.setPower(-direction * TURN_SPEED);
+      robot.leftBackMotor.setPower(-direction * TURN_SPEED);
+      robot.rightBackMotor.setPower(direction * TURN_SPEED);
+      float currentAngle = angles.firstAngle;
+      if(currentAngle - lastAngle > 90 ){
+        currentAngle -= 360;
+      }else if(currentAngle - lastAngle < -90){
+        currentAngle += 360;
+      }
+      degreesMoved += currentAngle - lastAngle;
+      if(direction < 0){
+        done = degreesMoved < degrees;
+      }else if(direction > 0) {
+        done = degreesMoved > degrees;
+      }
+      lastAngle = currentAngle;
+    }		robot.leftFrontMotor.setPower(0);
+    robot.rightFrontMotor.setPower(Math.abs(0));
+    robot.leftBackMotor.setPower(Math.abs(0));
+    robot.rightBackMotor.setPower(Math.abs(0));
+  }
+
   public void dropMarker(){
     robot.scoopMotor.setTargetPosition(288);
     sleep(1500);
@@ -375,21 +387,23 @@ public class AutonomousOG extends LinearOpMode {
     sleep(1500);
   }
 
-  // Look at AutonomousSudo text file for more info about these 3 methods
+
 
   public void leftPath(){
     if (opModeIsActive()) {
-      //Do left stuff
+      encoderDrive(DRIVE_SPEED,-10,-10,7);
+      turn(-43);
     }
   }
   public void rightPath(){
     if (opModeIsActive()) {
-      //Do right stuff
+      encoderDrive(DRIVE_SPEED,-10,-10,7);
+      turn(43);
     }
   }
   public void centerPath(){
     if (opModeIsActive()) {
-      //Do center stuff
+      encoderDrive(DRIVE_SPEED,-10,-10,7);
     }
   }
 
