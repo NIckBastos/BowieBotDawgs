@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp(name = "throttleTestMinimal", group = "TeleOp")
@@ -62,11 +61,9 @@ public class throttleTestMinimal extends OpMode {
         }
 
         if(gamepad1.right_bumper && !gamepad1.left_bumper){
-            robot.leftLiftServo.setPosition(0.25);
-            robot.rightLiftServo.setPosition(0.25);
+            robot.scoopMotor.setTargetPosition(0);
         }else if(!gamepad1.right_bumper && gamepad1.left_bumper){
-            robot.leftLiftServo.setPosition(0.0);
-            robot.rightLiftServo.setPosition(0.0);
+            robot.scoopMotor.setTargetPosition(-72);
         }
         if(gamepad1.right_bumper){
             robot.liftMotor.setPower(1);

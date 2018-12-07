@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -82,6 +81,7 @@ public class MainTeleOpMode extends OpMode {
         // Setting the power of the lift motor to the y value of the gamepad1 right joystick
         robot.liftMotor.setPower(gamepad1.right_stick_y);
         robot.scoopMotor.setPower(1);
+
         // Setting the power of the scoop motor to the bumpers of the gamepad1
         if(!gamepad1.dpad_down && gamepad1.dpad_up){
             robot.scoopMotor.setTargetPosition(0);
@@ -90,11 +90,9 @@ public class MainTeleOpMode extends OpMode {
         }
 
         if(gamepad1.right_bumper && !gamepad1.left_bumper){
-            robot.leftLiftServo.setPosition(0.25);
-            robot.rightLiftServo.setPosition(0.25);
+            robot.lockMotor.setTargetPosition(0);
         }else if(!gamepad1.right_bumper && gamepad1.left_bumper){
-            robot.leftLiftServo.setPosition(0.0);
-            robot.rightLiftServo.setPosition(0.0);
+            robot.lockMotor.setTargetPosition(10);
         }
 
 
