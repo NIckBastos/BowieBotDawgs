@@ -29,7 +29,6 @@ package org.firstinspires.ftc.teamcode;/* Copyright (c) 2017 FIRST. All rights r
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotor.RunMode;
 import com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior;
@@ -72,6 +71,7 @@ public class BotDawg
     public DcMotor liftMotor= null;
     public Servo markerServo= null;
     public DcMotor scoopMotor = null;
+    public DcMotor lockMotor =null;
     public Servo leftLiftServo = null;
     public Servo rightLiftServo = null;
     BNO055IMU imu;
@@ -99,6 +99,7 @@ public class BotDawg
           liftMotor = hardwareMap.dcMotor.get("liftMotor");
           markerServo = hardwareMap.servo.get("MarkerServo");
           scoopMotor = hardwareMap.dcMotor.get("scoopMotor");
+          lockMotor = hardwareMap.dcMotor.get("lockMotor");
           leftLiftServo = hardwareMap.servo.get("leftLiftServo");
           rightLiftServo = hardwareMap.servo.get("rightLiftServo");
           imu = hardwareMap.get(BNO055IMU.class, "imu");
@@ -138,6 +139,9 @@ public class BotDawg
       scoopMotor.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
       scoopMotor.setMode(RunMode.STOP_AND_RESET_ENCODER);
       scoopMotor.setMode(RunMode.RUN_TO_POSITION);
+      lockMotor.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
+      lockMotor.setMode(RunMode.STOP_AND_RESET_ENCODER);
+      lockMotor.setMode(RunMode.RUN_TO_POSITION);
 
 
     }
