@@ -72,9 +72,9 @@ import java.util.Locale;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="LiftTest", group="Pushbot")
+@Autonomous(name="LockTest", group="Pushbot")
 //@Disabled
-public class LiftTest extends LinearOpMode {
+public class LockTest extends LinearOpMode {
 
     // The IMU sensor object
 
@@ -308,8 +308,7 @@ public class LiftTest extends LinearOpMode {
     public void centerPath(){
         if (opModeIsActive()) {
             robot.lockMotor.setTargetPosition(10);
-            robot.scoopMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            encoderLift(Lift_Speed,6,5);
+            robot.scoopMotor.setTargetPosition(0);
 
         }
     }
@@ -335,5 +334,4 @@ public class LiftTest extends LinearOpMode {
 
 
 }
-
 

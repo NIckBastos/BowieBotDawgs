@@ -368,20 +368,17 @@ public class AutonomousOG extends LinearOpMode {
 
   public void leftPath(){
     if (opModeIsActive()) {
-      robot.lockMotor.setTargetPosition(10);
-      encoderLift(Lift_Speed,6,5);
+
     }
   }
   public void rightPath(){
     if (opModeIsActive()) {
-      robot.lockMotor.setTargetPosition(10);
-      encoderLift(Lift_Speed,6,5);
+
     }
   }
   public void centerPath(){
     if (opModeIsActive()) {
-      robot.lockMotor.setTargetPosition(10);
-      encoderLift(Lift_Speed,6,5);
+
     }
   }
 
