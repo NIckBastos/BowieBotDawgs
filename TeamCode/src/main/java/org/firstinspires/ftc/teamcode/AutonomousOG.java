@@ -34,19 +34,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import java.sql.Driver;
-import java.util.List;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
-import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-
-
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-
-import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -54,11 +43,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
-
-import java.util.Locale;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+
+import java.util.List;
+import java.util.Locale;
 
 /**
  * This file illustrates the concept of driving a path based on encoder counts.
@@ -87,7 +78,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Autonomous OG", group="Pushbot")
+@Autonomous(name="Crater", group="Pushbot")
 //@Disabled
 public class AutonomousOG extends LinearOpMode {
 
@@ -101,13 +92,14 @@ public class AutonomousOG extends LinearOpMode {
   private BotDawg robot = new BotDawg();   // Use a Pushbot's hardware
   private ElapsedTime runtime = new ElapsedTime();
 
+
   private static final double     COUNTS_PER_MOTOR_REV    = 1440 ;    // eg: TETRIX Motor Encoder
   private static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // This is < 1.0 if geared UP
   private static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
   private static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
       (WHEEL_DIAMETER_INCHES * 3.1415);
-  static final double     DRIVE_SPEED             = 0.7;
-  static final double     TURN_SPEED              = 0.5;
+  static final double     DRIVE_SPEED             = 0.5;
+  static final double     TURN_SPEED              = 0.4;
   static final double     Lift_Speed              = 0.4;
 
   public static double min(double a, double b, double c) {
@@ -145,8 +137,10 @@ public class AutonomousOG extends LinearOpMode {
 
   @Override
   public void runOpMode() {
-    robot.init(hardwareMap);
 
+
+    robot.init(hardwareMap);
+//    com.vuforia.CameraDevice.getInstance().setFlashTorchMode(true);
     // The TFObjectDetector uses the camera frames from the VuforiaLocalizer, so we create that
     // first.
     initVuforia();
@@ -181,13 +175,11 @@ public class AutonomousOG extends LinearOpMode {
     // Start the logging of measured acceleration
     robot.imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
 
-
     if (opModeIsActive()) {
       /** Activate Tensor Flow Object Detection. */
       if (tfod != null) {
         tfod.activate();
       }
-
       while (opModeIsActive()) {
         if (tfod != null) {
           // getUpdatedRecognitions() will return null if no new information is available since
@@ -195,7 +187,7 @@ public class AutonomousOG extends LinearOpMode {
           List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
           if (updatedRecognitions != null) {
             telemetry.addData("# Object Detected", updatedRecognitions.size());
-            if (updatedRecognitions.size() == 3) {
+            if (updatedRecognitions.size() == 2) {
               int goldMineralX = -1;
               int silverMineral1X = -1;
               int silverMineral2X = -1;
@@ -208,30 +200,37 @@ public class AutonomousOG extends LinearOpMode {
                   silverMineral2X = (int) recognition.getLeft();
                 }
               }
-              if (goldMineralX != -1 && silverMineral1X != -1 && silverMineral2X != -1) {
-                if (goldMineralX < silverMineral1X && goldMineralX < silverMineral2X) {
-                  telemetry.addData("Gold Mineral Position", "Left");
-                  leftPath();
-                } else if (goldMineralX > silverMineral1X && goldMineralX > silverMineral2X) {
-                  telemetry.addData("Gold Mineral Position", "Right");
-                  rightPath();
+//              telemetry.addData("Silver11", )
+              if (goldMineralX == -1) {
+                telemetry.addData("Gold Mineral Position", "Left");
+                telemetry.update();
+                sleep(1000);
+                leftPath();
+              } else if (silverMineral2X == -1) {
+                telemetry.addData("Gold Mineral Position", "Center");
+                telemetry.update();
+                sleep(1000);
+                centerPath();
+                if (silverMineral1X > goldMineralX) {
                 } else {
-                  telemetry.addData("Gold Mineral Position", "Center");
-                  centerPath();
+                  telemetry.addData("Gold Mineral Position", "Right");
+                  telemetry.update();
+                  sleep(1000);
+                  rightPath();
                 }
               }
+            }else {
+              telemetry.addData("Cant see 2 minerals", "Center");
+              telemetry.update();
+              sleep(1000);
+              centerPath();
             }
-            telemetry.update();
           }
+          telemetry.update();
         }
       }
     }
-
-    if (tfod != null) {
-      tfod.shutdown();
-    }
   }
-
   String formatAngle(AngleUnit angleUnit, double angle) {
     return formatDegrees(AngleUnit.DEGREES.fromUnit(angleUnit, angle));
   }
@@ -380,30 +379,29 @@ public class AutonomousOG extends LinearOpMode {
     robot.rightBackMotor.setPower(Math.abs(0));
   }
 
-  public void dropMarker(){
-    robot.scoopMotor.setTargetPosition(288);
-    sleep(1500);
-    robot.scoopMotor.setTargetPosition(0);
-    sleep(1500);
-  }
-
 
 
   public void leftPath(){
     if (opModeIsActive()) {
+      encoderDrive(DRIVE_SPEED,-2,-2,2);
+      sleep(500);
+      turn(15);
+      sleep(500);
       encoderDrive(DRIVE_SPEED,-10,-10,7);
-      turn(-43);
     }
   }
   public void rightPath(){
     if (opModeIsActive()) {
-      encoderDrive(DRIVE_SPEED,-10,-10,7);
-      turn(43);
+      encoderDrive(DRIVE_SPEED,-3,-3,2);
+      sleep(500);
+      turn(-17);
+      sleep(500);
+      encoderDrive(DRIVE_SPEED,-13,-13,9);
     }
   }
   public void centerPath(){
     if (opModeIsActive()) {
-      encoderDrive(DRIVE_SPEED,-10,-10,7);
+      encoderDrive(DRIVE_SPEED,-15,-15,10);
     }
   }
 

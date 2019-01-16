@@ -30,6 +30,7 @@ package org.firstinspires.ftc.teamcode;/* Copyright (c) 2017 FIRST. All rights r
 import android.content.Context;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -73,7 +74,7 @@ import java.util.Locale;
  */
 
 @Autonomous(name="LiftTest", group="Pushbot")
-//@Disabled
+@Disabled
 public class LiftTest extends LinearOpMode {
 
     // The IMU sensor object
@@ -307,8 +308,7 @@ public class LiftTest extends LinearOpMode {
 
     public void centerPath(){
         if (opModeIsActive()) {
-            robot.lockMotor.setTargetPosition(10);
-            robot.scoopMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
             encoderLift(Lift_Speed,6,5);
 
         }

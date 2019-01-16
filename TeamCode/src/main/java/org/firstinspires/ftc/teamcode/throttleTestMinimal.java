@@ -52,19 +52,7 @@ public class throttleTestMinimal extends OpMode {
 
         // Setting the power of the lift motor to the y value of the gamepad1 right joystick
         robot.liftMotor.setPower(gamepad1.right_stick_y);
-        robot.scoopMotor.setPower(1);
-        // Setting the power of the scoop motor to the bumpers of the gamepad1
-        if(!gamepad1.dpad_down && gamepad1.dpad_up){
-          robot.scoopMotor.setTargetPosition(0);
-        }else if (gamepad1.dpad_down && !gamepad1.dpad_up){
-          robot.scoopMotor.setTargetPosition(-72);
-        }
 
-        if(gamepad1.right_bumper && !gamepad1.left_bumper){
-            robot.scoopMotor.setTargetPosition(0);
-        }else if(!gamepad1.right_bumper && gamepad1.left_bumper){
-            robot.scoopMotor.setTargetPosition(-72);
-        }
         if(gamepad1.right_bumper){
             robot.liftMotor.setPower(1);
         }

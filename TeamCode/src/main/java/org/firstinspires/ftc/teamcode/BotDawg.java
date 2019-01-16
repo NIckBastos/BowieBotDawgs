@@ -54,7 +54,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 public class BotDawg
 {
-    /* Public OpMode members. */
+  /* Public OpMode members. */
 //    public DcMotor leftFrontMotor   = null;
 //    public DcMotor leftBackMotor  = null;
 //    public DcMotor rightFrontMotor     = null;
@@ -64,85 +64,87 @@ public class BotDawg
 //    public Servo rightClampServo   = null;
 //    public Servo armServo = null;
 //    public ColorSensor colorSensor;
-    public DcMotor leftFrontMotor= null;
-    public DcMotor leftBackMotor= null;
-    public DcMotor rightBackMotor= null;
-    public DcMotor rightFrontMotor= null;
-    public DcMotor liftMotor= null;
-    public Servo markerServo= null;
-    public DcMotor scoopMotor = null;
-    public DcMotor lockMotor =null;
-    public Servo leftLiftServo = null;
-    public Servo rightLiftServo = null;
-    BNO055IMU imu;
-    public static final double MID_SERVO       =  0.5 ;
-    public static final double ARM_UP_POWER    =  0.45 ;
-    public static final double ARM_DOWN_POWER  = -0.45 ;
+  public DcMotor leftFrontMotor= null;
+  public DcMotor leftBackMotor= null;
+  public DcMotor rightBackMotor= null;
+  public DcMotor rightFrontMotor= null;
+  public DcMotor liftMotor= null;
+  public DcMotor armMotor= null;
+  public Servo markerServo= null;
+  public DcMotor lockMotor =null;
+  public DcMotor intakeMotor =null;
+  public Servo leftLiftServo = null;
+  public Servo rightLiftServo = null;
+  BNO055IMU imu;
+  public static final double MID_SERVO       =  0.5 ;
+  public static final double ARM_UP_POWER    =  0.45 ;
+  public static final double ARM_DOWN_POWER  = -0.45 ;
 
-    /* local OpMode members. */
-    HardwareMap hwMap =  null;
-    private ElapsedTime period  = new ElapsedTime();
+  /* local OpMode members. */
+  HardwareMap hwMap =  null;
+  private ElapsedTime period  = new ElapsedTime();
 
-    /* Constructor */
-    public BotDawg(){
+  /* Constructor */
+  public BotDawg(){
 
-    }
+  }
 
-    /* Initialize standard Hardware interfaces */
-    public void init(HardwareMap hardwareMap) {
+  /* Initialize standard Hardware interfaces */
+  public void init(HardwareMap hardwareMap) {
 
-        //Assigning variables
-          leftFrontMotor = hardwareMap.dcMotor.get("frontLeft");
-          leftBackMotor = hardwareMap.dcMotor.get("backLeft");
-          rightBackMotor = hardwareMap.dcMotor.get("frontRight");
-          rightFrontMotor = hardwareMap.dcMotor.get("backRight");
-          liftMotor = hardwareMap.dcMotor.get("liftMotor");
-          markerServo = hardwareMap.servo.get("MarkerServo");
-          scoopMotor = hardwareMap.dcMotor.get("scoopMotor");
-          lockMotor = hardwareMap.dcMotor.get("lockMotor");
-          leftLiftServo = hardwareMap.servo.get("leftLiftServo");
-          rightLiftServo = hardwareMap.servo.get("rightLiftServo");
-          imu = hardwareMap.get(BNO055IMU.class, "imu");
-
-
-
-      // Set up the parameters with which we will use our IMU. Note that integration
-      // algorithm here just reports accelerations to the logcat log; it doesn't actually
-      // provide positional information.
-      BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-      parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-      parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-      parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
-      parameters.loggingEnabled      = true;
-      parameters.loggingTag          = "IMU";
-      parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+    //Assigning variables
+    leftFrontMotor = hardwareMap.dcMotor.get("frontLeft");
+    leftBackMotor = hardwareMap.dcMotor.get("backLeft");
+    rightBackMotor = hardwareMap.dcMotor.get("frontRight");
+    rightFrontMotor = hardwareMap.dcMotor.get("backRight");
+    liftMotor = hardwareMap.dcMotor.get("liftMotor");
+    armMotor = hardwareMap.dcMotor.get("armMotor");
+    markerServo = hardwareMap.servo.get("MarkerServo");
+    lockMotor = hardwareMap.dcMotor.get("lockMotor");
+    intakeMotor = hardwareMap.dcMotor.get("intakeMotor");
+    leftLiftServo = hardwareMap.servo.get("leftLiftServo");
+    rightLiftServo = hardwareMap.servo.get("rightLiftServo");
+    imu = hardwareMap.get(BNO055IMU.class, "imu");
 
 
-      // Initialize sensor parameters
-      imu.initialize(parameters);
+
+    // Set up the parameters with which we will use our IMU. Note that integration
+    // algorithm here just reports accelerations to the logcat log; it doesn't actually
+    // provide positional information.
+    BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+    parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+    parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+    parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+    parameters.loggingEnabled      = true;
+    parameters.loggingTag          = "IMU";
+    parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
 
 
-        //Assigning directions of motors
+    // Initialize sensor parameters
+    imu.initialize(parameters);
 
 
-        rightFrontMotor.setDirection(DcMotor.Direction.REVERSE);
-        rightBackMotor.setDirection(DcMotor.Direction.REVERSE);
+    //Assigning directions of motors
+
+
+    rightFrontMotor.setDirection(DcMotor.Direction.REVERSE);
+    rightBackMotor.setDirection(DcMotor.Direction.REVERSE);
 
 
 //    leftFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-      leftFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-      leftBackMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-      rightFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-      rightBackMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-      liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-      scoopMotor.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
-      scoopMotor.setMode(RunMode.STOP_AND_RESET_ENCODER);
-      scoopMotor.setMode(RunMode.RUN_TO_POSITION);
-      lockMotor.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
-      lockMotor.setMode(RunMode.STOP_AND_RESET_ENCODER);
-      lockMotor.setMode(RunMode.RUN_TO_POSITION);
+    leftFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    leftBackMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    rightFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    rightBackMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    lockMotor.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
+    lockMotor.setMode(RunMode.STOP_AND_RESET_ENCODER);
+    lockMotor.setMode(RunMode.RUN_TO_POSITION);
+    armMotor.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
+    armMotor.setMode(RunMode.STOP_AND_RESET_ENCODER);
+    armMotor.setMode(RunMode.RUN_TO_POSITION);
 
 
-    }
- }
-
+  }
+}

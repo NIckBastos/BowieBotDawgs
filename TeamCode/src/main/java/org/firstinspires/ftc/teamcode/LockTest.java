@@ -30,6 +30,7 @@ package org.firstinspires.ftc.teamcode;/* Copyright (c) 2017 FIRST. All rights r
 import android.content.Context;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -280,36 +281,16 @@ public class LockTest extends LinearOpMode {
         }
     }
 
-    //  public void turn(float degrees) {
-//    while (opModeIsActive()) {
-//      degrees = degrees + angles.firstAngle;
-//      if ((angles.firstAngle != degrees) && (degrees < 0)) {
-//        robot.leftFrontMotor.setPower(-TURN_SPEED);
-//        robot.rightFrontMotor.setPower(Math.abs(TURN_SPEED));
-//        robot.leftBackMotor.setPower(Math.abs(-TURN_SPEED));
-//        robot.rightBackMotor.setPower(Math.abs(TURN_SPEED));
-//      }else if((angles.firstAngle != degrees) && (degrees > 0)){
-//        robot.leftFrontMotor.setPower(TURN_SPEED);
-//        robot.rightFrontMotor.setPower(Math.abs(-TURN_SPEED));
-//        robot.leftBackMotor.setPower(Math.abs(TURN_SPEED));
-//        robot.rightBackMotor.setPower(Math.abs(-TURN_SPEED));
-//      }else{
-//        robot.leftFrontMotor.setPower(0);
-//        robot.rightFrontMotor.setPower(Math.abs(0));
-//        robot.leftBackMotor.setPower(Math.abs(0));
-//        robot.rightBackMotor.setPower(Math.abs(0));
-//
-//      }
-//    }
-//  }
-
 
 
     public void centerPath(){
         if (opModeIsActive()) {
-            robot.lockMotor.setTargetPosition(10);
-            robot.scoopMotor.setTargetPosition(0);
-
+//            robot.lockMotor.setPower(0);
+            robot.lockMotor.setPower(1);
+            robot.lockMotor.setTargetPosition(1000);
+            telemetry.addData("centerPath", null);
+            telemetry.update();
+//            encoderLift(Lift_Speed,7,4);
         }
     }
 

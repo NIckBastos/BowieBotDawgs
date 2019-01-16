@@ -21,7 +21,7 @@ public class MainTeleOpMode extends OpMode {
     private static final double     DRIVE_GEAR_REDUCTION    = 2 ;     // This is < 1.0 if geared UP
     private static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
     private static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
-            (WHEEL_DIAMETER_INCHES * 3.1415);
+        (WHEEL_DIAMETER_INCHES * 3.1415);
 
 
     double motorMovementMin = 0.0;
@@ -47,21 +47,21 @@ public class MainTeleOpMode extends OpMode {
 
     public void loop() {
 
-
-
         //Assigning gamepad values
         leftJoyStick = -gamepad1.left_stick_y;
         rightJoyStick = gamepad1.right_stick_x;
 
-        //This is for limiting the speed of movement motors
 
+        // Code for GamePad2 (Drive Base)
+
+        //This is for limiting the speed of movement motors
         if (gamepad1.a && !gamepad1.y){
-            motorMovementMin = -0.4;
-            motorMovementMax = 0.3;
+            motorMovementMin = -0.7;
+            motorMovementMax = 0.7;
 
         }else if (gamepad1.y && !gamepad1.a){
-            motorMovementMin = -0.15;
-            motorMovementMax = 0.15;
+            motorMovementMin = -0.35;
+            motorMovementMax = 0.35;
         }
 
         if (Math.abs(leftJoyStick) < JOYSTICK_DEADBAND) leftJoyStick = 0;
@@ -79,20 +79,49 @@ public class MainTeleOpMode extends OpMode {
 
 
         // Setting the power of the lift motor to the y value of the gamepad1 right joystick
-        robot.liftMotor.setPower(gamepad1.right_stick_y);
-        robot.scoopMotor.setPower(1);
 
-        // Setting the power of the scoop motor to the bumpers of the gamepad1
-        if(!gamepad1.dpad_down && gamepad1.dpad_up){
-            robot.scoopMotor.setTargetPosition(0);
-        }else if (gamepad1.dpad_down && !gamepad1.dpad_up){
-            robot.scoopMotor.setTargetPosition(-72);
+        robot.liftMotor.setPower(gamepad2.right_stick_y);
+
+
+        // If dpad in gampepad1 is pressed turn the arm
+        if(!gamepad2.dpad_down && gamepad2.dpad_up){
+            robot.armMotor.setPower(.7);
+            robot.armMotor.setTargetPosition(-270);
+            telemetry.addData("Arm retracting",null);
+        }else if (gamepad2.dpad_down && !gamepad2.dpad_up){
+            robot.armMotor.setPower(.7);
+            robot.armMotor.setTargetPosition(270);
+            telemetry.addData("Arm extending",null);
+
+        }else{
+            robot.armMotor.setPower(0);
         }
 
-        if(gamepad1.right_bumper && !gamepad1.left_bumper){
-            robot.lockMotor.setTargetPosition(0);
-        }else if(!gamepad1.right_bumper && gamepad1.left_bumper){
-            robot.lockMotor.setTargetPosition(10);
+
+        //Setting the power of the intake motor to 1
+        if(gamepad2.a){
+            robot.intakeMotor.setPower(1);
+            telemetry.addData("Intake moving",null);
+        }
+        if(gamepad2.b){
+            robot.intakeMotor.setPower(0);
+            telemetry.addData("Intake stop",null);
+        }
+        if(gamepad2.y){
+            robot.intakeMotor.setPower(-1);
+            telemetry.addData("Intake revert",null);
+        }
+
+
+        if(gamepad2.right_bumper && !gamepad2.left_bumper){
+            robot.lockMotor.setPower(1);
+            robot.lockMotor.setTargetPosition(-500);
+            telemetry.addData("LockMotor is locking",null);
+
+        }else if(!gamepad2.right_bumper && gamepad2.left_bumper){
+            robot.lockMotor.setPower(-1);
+            robot.lockMotor.setTargetPosition(500);
+            telemetry.addData("LockMotor is unlockin",null);
         }
 
 
@@ -103,6 +132,6 @@ public class MainTeleOpMode extends OpMode {
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         telemetry.addData("Motors", "left (%.2f), right (%.2f)",leftMotorPower, rightMotorPower);
         telemetry.addData("Dpad up","Up, Down", gamepad1.dpad_up,gamepad1.dpad_down);
-        telemetry.addData("Scoop power", robot.scoopMotor.getPowerFloat());
+
     }
 }
