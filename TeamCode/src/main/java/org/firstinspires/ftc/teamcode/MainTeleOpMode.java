@@ -72,10 +72,10 @@ public class MainTeleOpMode extends OpMode {
         leftMotorPower = Range.clip(leftJoyStick + rightJoyStick, motorMovementMin, motorMovementMax);
         rightMotorPower = Range.clip(leftJoyStick - rightJoyStick, motorMovementMin, motorMovementMax);
 
-        robot.leftFrontMotor.setPower(-leftMotorPower);
-        robot.leftBackMotor.setPower(-leftMotorPower);
-        robot.rightFrontMotor.setPower(-rightMotorPower);
-        robot.rightBackMotor.setPower(-rightMotorPower);
+        robot.leftFrontMotor.setPower(leftMotorPower);
+        robot.leftBackMotor.setPower(leftMotorPower);
+        robot.rightFrontMotor.setPower(rightMotorPower);
+        robot.rightBackMotor.setPower(rightMotorPower);
 
 
         // Setting the power of the lift motor to the y value of the gamepad1 right joystick
