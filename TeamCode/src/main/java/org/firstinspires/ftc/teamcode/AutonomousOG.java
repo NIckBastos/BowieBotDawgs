@@ -34,8 +34,20 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+
+import java.sql.Driver;
+import java.util.List;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
+import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+
+
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+
+import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -43,13 +55,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+
+import java.util.Locale;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
-
-import java.util.List;
-import java.util.Locale;
 
 /**
  * This file illustrates the concept of driving a path based on encoder counts.
@@ -97,7 +107,7 @@ public class AutonomousOG extends LinearOpMode {
   private static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // This is < 1.0 if geared UP
   private static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
   private static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
-          (WHEEL_DIAMETER_INCHES * 3.1415);
+      (WHEEL_DIAMETER_INCHES * 3.1415);
   static final double     DRIVE_SPEED             = 0.5;
   static final double     TURN_SPEED              = 0.4;
   static final double     Lift_Speed              = 0.4;
@@ -159,10 +169,10 @@ public class AutonomousOG extends LinearOpMode {
     telemetry.update();
     // Send telemetry message to indicate successful Encoder reset
     telemetry.addData("Path0", "Starting at %7d :%7d",
-            robot.leftFrontMotor.getCurrentPosition(),
-            robot.rightFrontMotor.getCurrentPosition(),
-            robot.leftBackMotor.getCurrentPosition(),
-            robot.rightBackMotor.getCurrentPosition());
+        robot.leftFrontMotor.getCurrentPosition(),
+        robot.rightFrontMotor.getCurrentPosition(),
+        robot.leftBackMotor.getCurrentPosition(),
+        robot.rightBackMotor.getCurrentPosition());
     telemetry.update();
 
     // Wait for the game to start (driver presses PLAY)
@@ -240,8 +250,8 @@ public class AutonomousOG extends LinearOpMode {
   }
 
   public void encoderDrive(double speed,
-                           double leftInches, double rightInches,
-                           double timeoutS) {
+      double leftInches, double rightInches,
+      double timeoutS) {
     int newLeftFrontTarget;
     int newRightFrontTarget;
     int newLeftBackTarget;
@@ -281,13 +291,13 @@ public class AutonomousOG extends LinearOpMode {
       // However, if you require that BOTH motors have finished their moves before the robot continues
       // onto the next step, use (isBusy() || isBusy()) in the loop test.
       while (opModeIsActive() &&
-              (runtime.seconds() < timeoutS) &&
-              (robot.leftFrontMotor.isBusy() && robot.rightFrontMotor.isBusy())) {
+          (runtime.seconds() < timeoutS) &&
+          (robot.leftFrontMotor.isBusy() && robot.rightFrontMotor.isBusy())) {
 
         // Display it for the driver.
         telemetry.addData("Path2",  "Running at %7d :%7d",
-                robot.leftFrontMotor.getCurrentPosition(),
-                robot.rightFrontMotor.getCurrentPosition());
+            robot.leftFrontMotor.getCurrentPosition(),
+            robot.rightFrontMotor.getCurrentPosition());
         telemetry.update();
       }
       // Stop all motion;
@@ -304,8 +314,8 @@ public class AutonomousOG extends LinearOpMode {
   }
 
   public void encoderLift(double speed,
-                          double yInches,
-                          double timeoutS) {
+      double yInches,
+      double timeoutS) {
     int newYTarget;
 
 
@@ -328,12 +338,12 @@ public class AutonomousOG extends LinearOpMode {
 
 
       while (opModeIsActive() &&
-              (runtime.seconds() < timeoutS) &&
-              (robot.liftMotor.isBusy())) {
+          (runtime.seconds() < timeoutS) &&
+          (robot.liftMotor.isBusy())) {
 
         // Display it for the driver.
         telemetry.addData("Path2",  "Running at %7d :%7d",
-                robot.liftMotor.getCurrentPosition());
+            robot.liftMotor.getCurrentPosition());
         telemetry.update();
       }
       // Stop all motion;
@@ -431,7 +441,7 @@ public class AutonomousOG extends LinearOpMode {
    */
   private void initTfod() {
     int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
-            "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
     TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
     tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
     tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_GOLD_MINERAL, LABEL_SILVER_MINERAL);

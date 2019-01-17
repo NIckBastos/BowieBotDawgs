@@ -21,7 +21,7 @@ public class MainTeleOpMode extends OpMode {
     private static final double     DRIVE_GEAR_REDUCTION    = 2 ;     // This is < 1.0 if geared UP
     private static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
     private static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
-            (WHEEL_DIAMETER_INCHES * 3.1415);
+        (WHEEL_DIAMETER_INCHES * 3.1415);
 
 
     double motorMovementMin = 0.0;
