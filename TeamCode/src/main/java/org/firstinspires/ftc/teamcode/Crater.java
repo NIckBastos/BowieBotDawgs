@@ -80,7 +80,7 @@ import java.util.Locale;
 
 @Autonomous(name="Crater", group="Pushbot")
 //@Disabled
-public class AutonomousOG extends LinearOpMode {
+public class Crater extends LinearOpMode {
 
   // The IMU sensor object
 

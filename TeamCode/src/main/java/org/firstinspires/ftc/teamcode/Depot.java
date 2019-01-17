@@ -34,20 +34,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-
-import java.sql.Driver;
-import java.util.List;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
-import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-
-
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-
-import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -55,11 +43,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
-
-import java.util.Locale;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+
+import java.util.List;
+import java.util.Locale;
 
 /**
  * This file illustrates the concept of driving a path based on encoder counts.
@@ -107,7 +97,7 @@ public class Depot extends LinearOpMode {
   private static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // This is < 1.0 if geared UP
   private static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
   private static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
-      (WHEEL_DIAMETER_INCHES * 3.1415);
+          (WHEEL_DIAMETER_INCHES * 3.1415);
   static final double     DRIVE_SPEED             = 0.5;
   static final double     TURN_SPEED              = 0.4;
   static final double     Lift_Speed              = 0.4;
@@ -146,8 +136,9 @@ public class Depot extends LinearOpMode {
   private TFObjectDetector tfod;
 
   @Override
-
   public void runOpMode() {
+
+
     robot.init(hardwareMap);
 //    com.vuforia.CameraDevice.getInstance().setFlashTorchMode(true);
     // The TFObjectDetector uses the camera frames from the VuforiaLocalizer, so we create that
@@ -168,10 +159,10 @@ public class Depot extends LinearOpMode {
     telemetry.update();
     // Send telemetry message to indicate successful Encoder reset
     telemetry.addData("Path0", "Starting at %7d :%7d",
-        robot.leftFrontMotor.getCurrentPosition(),
-        robot.rightFrontMotor.getCurrentPosition(),
-        robot.leftBackMotor.getCurrentPosition(),
-        robot.rightBackMotor.getCurrentPosition());
+            robot.leftFrontMotor.getCurrentPosition(),
+            robot.rightFrontMotor.getCurrentPosition(),
+            robot.leftBackMotor.getCurrentPosition(),
+            robot.rightBackMotor.getCurrentPosition());
     telemetry.update();
 
     // Wait for the game to start (driver presses PLAY)
@@ -189,81 +180,57 @@ public class Depot extends LinearOpMode {
       if (tfod != null) {
         tfod.activate();
       }
-      if (opModeIsActive()) {
+      while (opModeIsActive()) {
         if (tfod != null) {
           // getUpdatedRecognitions() will return null if no new information is available since
           // the last time that call was made.
           List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
           if (updatedRecognitions != null) {
             telemetry.addData("# Object Detected", updatedRecognitions.size());
-            telemetry.update();
-            sleep(3000);
-            int goldMineralX = -1;
-            int silverMineral1X = -1;
-            int silverMineral2X = -1;
-            for (Recognition recognition : updatedRecognitions) {
-              if (recognition.getLabel().equals(LABEL_GOLD_MINERAL)) {
-                goldMineralX = (int) recognition.getTop();
-              } else if (silverMineral1X == -1) {
-                silverMineral1X = (int) recognition.getTop();
-              } else {
-                silverMineral2X = (int) recognition.getTop();
-              }
-            }
-            if (updatedRecognitions.size() == 3) {
-              if (goldMineralX != -1 && silverMineral1X != -1 && silverMineral2X != -1) {
-                if (goldMineralX < silverMineral1X && goldMineralX < silverMineral2X) {
-                  telemetry.addData("Gold Mineral Position", "Left");
-                  telemetry.update();
-                  sleep(3000);
-                  leftPath();
-                } else if (goldMineralX > silverMineral1X && goldMineralX > silverMineral2X) {
-                  telemetry.addData("Gold Mineral Position", "Right");
-                  telemetry.update();
-                  sleep(3000);
-                  rightPath();
+            if (updatedRecognitions.size() == 2) {
+              int goldMineralX = -1;
+              int silverMineral1X = -1;
+              int silverMineral2X = -1;
+              for (Recognition recognition : updatedRecognitions) {
+                if (recognition.getLabel().equals(LABEL_GOLD_MINERAL)) {
+                  goldMineralX = (int) recognition.getLeft();
+                } else if (silverMineral1X == -1) {
+                  silverMineral1X = (int) recognition.getLeft();
                 } else {
-                  telemetry.addData("Gold Mineral Position", "Center");
-                  telemetry.update();
-                  sleep(3000);
-                  centerPath();
+                  silverMineral2X = (int) recognition.getLeft();
                 }
               }
-            }else if(updatedRecognitions.size() == 2){
-              if(goldMineralX == -1){
-                telemetry.addData("Gold Mineral Position", "right");
+//              telemetry.addData("Silver11", )
+              if (goldMineralX == -1) {
+                telemetry.addData("Gold Mineral Position", "Left");
                 telemetry.update();
-                sleep(3000);
-                rightPath();
-              }else if(silverMineral1X > goldMineralX) {
-                telemetry.addData("Gold Mineral Position", "left");
-                telemetry.update();
-                sleep(3000);
+                sleep(1000);
                 leftPath();
-              }else{
+              } else if (silverMineral2X == -1) {
                 telemetry.addData("Gold Mineral Position", "Center");
                 telemetry.update();
-                sleep(3000);
+                sleep(1000);
                 centerPath();
+                if (silverMineral1X > goldMineralX) {
+                } else {
+                  telemetry.addData("Gold Mineral Position", "Right");
+                  telemetry.update();
+                  sleep(1000);
+                  rightPath();
+                }
               }
-            }else{
-//              centerPath();
-              telemetry.addData("Gold Mineral Position", "Else");
+            }else {
+              telemetry.addData("Cant see 2 minerals", "Center");
               telemetry.update();
-              sleep(3000);
-              leftPath();
+              sleep(1000);
+              centerPath();
             }
-            telemetry.update();
           }
+          telemetry.update();
         }
       }
     }
-
-    if (tfod != null) {
-      tfod.shutdown();
-    }
   }
-
   String formatAngle(AngleUnit angleUnit, double angle) {
     return formatDegrees(AngleUnit.DEGREES.fromUnit(angleUnit, angle));
   }
@@ -273,8 +240,8 @@ public class Depot extends LinearOpMode {
   }
 
   public void encoderDrive(double speed,
-      double leftInches, double rightInches,
-      double timeoutS) {
+                           double leftInches, double rightInches,
+                           double timeoutS) {
     int newLeftFrontTarget;
     int newRightFrontTarget;
     int newLeftBackTarget;
@@ -314,13 +281,13 @@ public class Depot extends LinearOpMode {
       // However, if you require that BOTH motors have finished their moves before the robot continues
       // onto the next step, use (isBusy() || isBusy()) in the loop test.
       while (opModeIsActive() &&
-          (runtime.seconds() < timeoutS) &&
-          (robot.leftFrontMotor.isBusy() && robot.rightFrontMotor.isBusy())) {
+              (runtime.seconds() < timeoutS) &&
+              (robot.leftFrontMotor.isBusy() && robot.rightFrontMotor.isBusy())) {
 
         // Display it for the driver.
         telemetry.addData("Path2",  "Running at %7d :%7d",
-            robot.leftFrontMotor.getCurrentPosition(),
-            robot.rightFrontMotor.getCurrentPosition());
+                robot.leftFrontMotor.getCurrentPosition(),
+                robot.rightFrontMotor.getCurrentPosition());
         telemetry.update();
       }
       // Stop all motion;
@@ -337,8 +304,8 @@ public class Depot extends LinearOpMode {
   }
 
   public void encoderLift(double speed,
-      double yInches,
-      double timeoutS) {
+                          double yInches,
+                          double timeoutS) {
     int newYTarget;
 
 
@@ -361,12 +328,12 @@ public class Depot extends LinearOpMode {
 
 
       while (opModeIsActive() &&
-          (runtime.seconds() < timeoutS) &&
-          (robot.liftMotor.isBusy())) {
+              (runtime.seconds() < timeoutS) &&
+              (robot.liftMotor.isBusy())) {
 
         // Display it for the driver.
         telemetry.addData("Path2",  "Running at %7d :%7d",
-            robot.liftMotor.getCurrentPosition());
+                robot.liftMotor.getCurrentPosition());
         telemetry.update();
       }
       // Stop all motion;
@@ -412,40 +379,44 @@ public class Depot extends LinearOpMode {
     robot.rightBackMotor.setPower(Math.abs(0));
   }
 
-  public void dropMarker(){
-    sleep(1500);
-  }
-
 
 
   public void leftPath(){
-
+    if (opModeIsActive()) {
+      encoderDrive(DRIVE_SPEED,-2,-2,2);
+      sleep(500);
       turn(15);
-//      encoderDrive(DRIVE_SPEED,-2,-2,2);
-//      sleep(500);
-//      turn(15);
-//      sleep(500);
-//      encoderDrive(DRIVE_SPEED,-10,-10,7);
-//      turn(-30);
-//      encoderDrive(DRIVE_SPEED,3,3,3);
-
+      sleep(500);
+      encoderDrive(DRIVE_SPEED,-10,-10,7);
+      sleep(500);
+      turn(-15);
+      sleep(500);
+      encoderDrive(DRIVE_SPEED, -2,-2,2);
+      sleep(200);
+      encoderDrive(DRIVE_SPEED, -10,-10,10);
+    }
   }
   public void rightPath(){
-      turn(-15);
-//      encoderDrive(DRIVE_SPEED,-2,-2,2);
-//      sleep(500);
-//      turn(-15);
-//      sleep(500);
-//      encoderDrive(DRIVE_SPEED,-13,-13,9);
-//      turn(30);
-//      encoderDrive(DRIVE_SPEED,3,3,3);
-
+    if (opModeIsActive()) {
+      encoderDrive(DRIVE_SPEED,-3,-3,2);
+      sleep(500);
+      turn(-17);
+      sleep(500);
+      encoderDrive(DRIVE_SPEED,-13,-13,9);
+      sleep(500);
+      turn(17);
+      sleep(500);
+      encoderDrive(DRIVE_SPEED, -2,-2,2);
+      sleep(200);
+      encoderDrive(DRIVE_SPEED, -10,-10,10);
+    }
   }
   public void centerPath(){
-
-      encoderDrive(DRIVE_SPEED,-15,-15,10);
-//      encoderDrive(DRIVE_SPEED,10,10,6);
-
+    if (opModeIsActive()) {
+      encoderDrive(DRIVE_SPEED,-20,-20,10);
+      sleep(200);
+      encoderDrive(DRIVE_SPEED, -10,-10,10);
+    }
   }
 
   String format(OpenGLMatrix transformationMatrix) {
@@ -474,7 +445,7 @@ public class Depot extends LinearOpMode {
    */
   private void initTfod() {
     int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
-        "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+            "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
     TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
     tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
     tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_GOLD_MINERAL, LABEL_SILVER_MINERAL);
