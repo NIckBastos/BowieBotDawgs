@@ -392,6 +392,8 @@ public class Depot extends LinearOpMode {
       turn(-15);
       sleep(500);
       encoderDrive(DRIVE_SPEED, -2,-2,2);
+
+      // Move out of the way for our alliance
       sleep(200);
       encoderDrive(DRIVE_SPEED, -10,-10,10);
     }
@@ -407,6 +409,8 @@ public class Depot extends LinearOpMode {
       turn(17);
       sleep(500);
       encoderDrive(DRIVE_SPEED, -2,-2,2);
+
+      // Move out of the way for our alliance
       sleep(200);
       encoderDrive(DRIVE_SPEED, -10,-10,10);
     }
@@ -414,6 +418,8 @@ public class Depot extends LinearOpMode {
   public void centerPath(){
     if (opModeIsActive()) {
       encoderDrive(DRIVE_SPEED,-20,-20,10);
+
+      // Move out of the way for our alliance
       sleep(200);
       encoderDrive(DRIVE_SPEED, -10,-10,10);
     }
