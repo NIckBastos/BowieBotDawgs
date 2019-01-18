@@ -87,11 +87,9 @@ public class MainTeleOpMode extends OpMode {
         if(!gamepad2.dpad_down && gamepad2.dpad_up){
             robot.armMotor.setPower(.7);
             robot.armMotor.setTargetPosition(-270);
-            telemetry.addData("Arm retracting",null);
         }else if (gamepad2.dpad_down && !gamepad2.dpad_up){
             robot.armMotor.setPower(.7);
             robot.armMotor.setTargetPosition(270);
-            telemetry.addData("Arm extending",null);
 
         }else{
             robot.armMotor.setPower(0);
@@ -101,27 +99,22 @@ public class MainTeleOpMode extends OpMode {
         //Setting the power of the intake motor to 1
         if(gamepad2.a){
             robot.intakeMotor.setPower(1);
-            telemetry.addData("Intake moving",null);
         }
         if(gamepad2.b){
             robot.intakeMotor.setPower(0);
-            telemetry.addData("Intake stop",null);
         }
         if(gamepad2.y){
             robot.intakeMotor.setPower(-1);
-            telemetry.addData("Intake revert",null);
         }
 
 
         if(gamepad2.right_bumper && !gamepad2.left_bumper){
             robot.lockMotor.setPower(1);
             robot.lockMotor.setTargetPosition(-500);
-            telemetry.addData("LockMotor is locking",null);
 
         }else if(!gamepad2.right_bumper && gamepad2.left_bumper){
             robot.lockMotor.setPower(-1);
             robot.lockMotor.setTargetPosition(500);
-            telemetry.addData("LockMotor is unlockin",null);
         }
 
 
@@ -131,7 +124,7 @@ public class MainTeleOpMode extends OpMode {
         //Information on the phone
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         telemetry.addData("Motors", "left (%.2f), right (%.2f)",leftMotorPower, rightMotorPower);
-        telemetry.addData("Dpad up","Up, Down", gamepad1.dpad_up,gamepad1.dpad_down);
+        telemetry.addData("Value of joystick = ", gamepad2.right_stick_y);
 
     }
 }
