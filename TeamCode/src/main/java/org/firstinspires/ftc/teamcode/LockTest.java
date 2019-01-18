@@ -30,7 +30,6 @@ package org.firstinspires.ftc.teamcode;/* Copyright (c) 2017 FIRST. All rights r
 import android.content.Context;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -286,11 +285,12 @@ public class LockTest extends LinearOpMode {
     public void centerPath(){
         if (opModeIsActive()) {
 //            robot.lockMotor.setPower(0);
+            encoderLift(Lift_Speed, 2,2);
             robot.lockMotor.setPower(1);
             robot.lockMotor.setTargetPosition(1000);
             telemetry.addData("centerPath", null);
             telemetry.update();
-//            encoderLift(Lift_Speed,7,4);
+
         }
     }
 
