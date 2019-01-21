@@ -158,12 +158,7 @@ public class Depot extends LinearOpMode {
     telemetry.addData("Status", "Resetting Encoders");
     telemetry.update();
     // Send telemetry message to indicate successful Encoder reset
-    telemetry.addData("Path0", "Starting at %7d :%7d",
-            robot.leftFrontMotor.getCurrentPosition(),
-            robot.rightFrontMotor.getCurrentPosition(),
-            robot.leftBackMotor.getCurrentPosition(),
-            robot.rightBackMotor.getCurrentPosition());
-    telemetry.update();
+
 
     // Wait for the game to start (driver presses PLAY)
     waitForStart();
@@ -180,7 +175,7 @@ public class Depot extends LinearOpMode {
       if (tfod != null) {
         tfod.activate();
       }
-      while (opModeIsActive()) {
+      if (opModeIsActive()) {
         if (tfod != null) {
           // getUpdatedRecognitions() will return null if no new information is available since
           // the last time that call was made.
@@ -284,11 +279,7 @@ public class Depot extends LinearOpMode {
               (runtime.seconds() < timeoutS) &&
               (robot.leftFrontMotor.isBusy() && robot.rightFrontMotor.isBusy())) {
 
-        // Display it for the driver.
-        telemetry.addData("Path2",  "Running at %7d :%7d",
-                robot.leftFrontMotor.getCurrentPosition(),
-                robot.rightFrontMotor.getCurrentPosition());
-        telemetry.update();
+
       }
       // Stop all motion;
       robot.leftFrontMotor.setPower(0);
@@ -331,10 +322,6 @@ public class Depot extends LinearOpMode {
               (runtime.seconds() < timeoutS) &&
               (robot.liftMotor.isBusy())) {
 
-        // Display it for the driver.
-        telemetry.addData("Path2",  "Running at %7d :%7d",
-                robot.liftMotor.getCurrentPosition());
-        telemetry.update();
       }
       // Stop all motion;
       robot.liftMotor.setPower(0);
@@ -393,9 +380,11 @@ public class Depot extends LinearOpMode {
       sleep(500);
       encoderDrive(DRIVE_SPEED, -2,-2,2);
 
-      // Move out of the way for our alliance
+      // Going to the other alliance crater
       sleep(200);
-      encoderDrive(DRIVE_SPEED, -10,-10,10);
+      turn(135);
+      sleep(100);
+      encoderDrive(DRIVE_SPEED, -27,-27,10);
     }
   }
   public void rightPath(){
@@ -410,18 +399,40 @@ public class Depot extends LinearOpMode {
       sleep(500);
       encoderDrive(DRIVE_SPEED, -2,-2,2);
 
-      // Move out of the way for our alliance
+      // Going to the other alliance crater
       sleep(200);
-      encoderDrive(DRIVE_SPEED, -10,-10,10);
+      turn(103);
+      sleep(100);
+      encoderDrive(DRIVE_SPEED, -27,-27,10);
     }
   }
   public void centerPath(){
     if (opModeIsActive()) {
-      encoderDrive(DRIVE_SPEED,-20,-20,10);
 
-      // Move out of the way for our alliance
+      //            robot.lockMotor.setPower(0);
+      encoderLift(Lift_Speed, 42,2);
+      robot.lockMotor.setPower(-1);
+      robot.lockMotor.setTargetPosition(-72);
+      runtime.reset();
+      while (opModeIsActive() &&
+              (runtime.seconds() < 1)
+              ) {
+        telemetry.addData("encoder",robot.lockMotor.getCurrentPosition());
+        telemetry.update();
+      }
+      telemetry.addData("centerPath", null);
+      encoderLift(Lift_Speed, -6,3);
+      telemetry.addData("encoder",robot.lockMotor.getTargetPosition());
+      telemetry.update();
+      sleep(100);
+      encoderDrive(DRIVE_SPEED,-16,-16,10);
+
+      // Going to the other alliance crater
       sleep(200);
-      encoderDrive(DRIVE_SPEED, -10,-10,10);
+      turn(120);
+      sleep(100);
+      encoderDrive(DRIVE_SPEED, -27,-27,10);
+
     }
   }
 

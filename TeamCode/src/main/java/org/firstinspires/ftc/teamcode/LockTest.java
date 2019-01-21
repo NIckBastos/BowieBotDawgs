@@ -266,16 +266,13 @@ public class LockTest extends LinearOpMode {
                     (runtime.seconds() < timeoutS) &&
                     (robot.liftMotor.isBusy())) {
 
-                // Display it for the driver.
-                telemetry.addData("Path2",  "Running at %7d :%7d",
-                        robot.liftMotor.getCurrentPosition());
-                telemetry.update();
             }
             // Stop all motion;
             robot.liftMotor.setPower(0);
 
             // Turn off RUN_TO_POSITION
-            robot.liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER)
+            ;
 
         }
     }
@@ -285,10 +282,19 @@ public class LockTest extends LinearOpMode {
     public void centerPath(){
         if (opModeIsActive()) {
 //            robot.lockMotor.setPower(0);
-            encoderLift(Lift_Speed, 2,2);
+            encoderLift(Lift_Speed, 42,2);
             robot.lockMotor.setPower(1);
-            robot.lockMotor.setTargetPosition(1000);
+            robot.lockMotor.setTargetPosition(72);
+            runtime.reset();
+            while (opModeIsActive() &&
+                    (runtime.seconds() < 1)
+                    ) {
+                telemetry.addData("encoder",robot.lockMotor.getCurrentPosition());
+                telemetry.update();
+            }
             telemetry.addData("centerPath", null);
+            encoderLift(Lift_Speed, -5,3);
+            telemetry.addData("encoder",robot.lockMotor.getTargetPosition());
             telemetry.update();
 
         }
