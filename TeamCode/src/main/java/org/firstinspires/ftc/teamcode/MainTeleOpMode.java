@@ -49,7 +49,7 @@ public class MainTeleOpMode extends OpMode {
 
         //Assigning gamepad values
         leftJoyStick = -gamepad1.left_stick_y;
-        rightJoyStick = gamepad1.right_stick_x;
+        rightJoyStick = -gamepad1.right_stick_x;
 
 
         // Code for GamePad2 (Drive Base)
