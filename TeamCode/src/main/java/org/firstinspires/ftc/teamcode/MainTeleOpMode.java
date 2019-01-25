@@ -52,17 +52,18 @@ public class MainTeleOpMode extends OpMode {
         rightJoyStick = -gamepad1.right_stick_x;
 
 
-        // Code for GamePad2 (Drive Base)
-
         //This is for limiting the speed of movement motors
-        if (gamepad1.a && !gamepad1.y){
-            motorMovementMin = -0.85;
-            motorMovementMax = 0.85;
-
-        }else if (gamepad1.y && !gamepad1.a){
-            motorMovementMin = -0.35;
-            motorMovementMax = 0.35;
-        }
+//        if (gamepad1.a && !gamepad1.y){
+//            motorMovementMin = -0.85;
+//            motorMovementMax = 0.85;
+//
+//        }else if (gamepad1.y && !gamepad1.a){
+//            motorMovementMin = -0.35;
+//            motorMovementMax = 0.35;
+//        }
+        // Code for GamePad2 (Drive Base)
+        motorMovementMin = -0.85;
+        motorMovementMax = 0.85;
 
         if (Math.abs(leftJoyStick) < JOYSTICK_DEADBAND) leftJoyStick = 0;
         if (Math.abs(rightJoyStick) < JOYSTICK_DEADBAND) rightJoyStick = 0;
