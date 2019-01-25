@@ -402,6 +402,13 @@ public class Crater extends LinearOpMode {
   public void centerPath(){
     if (opModeIsActive()) {
       encoderDrive(DRIVE_SPEED,-15,-15,10);
+      sleep(100);
+      encoderDrive(DRIVE_SPEED, 7,7,4);
+      sleep(50);
+      turn(62);
+      encoderDrive(DRIVE_SPEED, -7,-7,4);
+
+
     }
   }
 
