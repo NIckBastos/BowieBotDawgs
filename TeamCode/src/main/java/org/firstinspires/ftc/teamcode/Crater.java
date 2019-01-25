@@ -180,7 +180,7 @@ public class Crater extends LinearOpMode {
       if (tfod != null) {
         tfod.activate();
       }
-      while (opModeIsActive()) {
+      if (opModeIsActive()) {
         if (tfod != null) {
           // getUpdatedRecognitions() will return null if no new information is available since
           // the last time that call was made.
@@ -204,18 +204,19 @@ public class Crater extends LinearOpMode {
               if (goldMineralX == -1) {
                 telemetry.addData("Gold Mineral Position", "Left");
                 telemetry.update();
-                sleep(1000);
+                sleep(500);
                 leftPath();
               } else if (silverMineral2X == -1) {
                 telemetry.addData("Gold Mineral Position", "Center");
                 telemetry.update();
-                sleep(1000);
+                sleep(500);
                 centerPath();
+
                 if (silverMineral1X > goldMineralX) {
                 } else {
                   telemetry.addData("Gold Mineral Position", "Right");
                   telemetry.update();
-                  sleep(1000);
+                  sleep(500);
                   rightPath();
                 }
               }
@@ -384,25 +385,44 @@ public class Crater extends LinearOpMode {
   public void leftPath(){
     if (opModeIsActive()) {
       encoderDrive(DRIVE_SPEED,-2,-2,2);
-      sleep(500);
+      sleep(200);
       turn(15);
       sleep(500);
       encoderDrive(DRIVE_SPEED,-10,-10,7);
+      sleep(50);
+
+      //Going to our alliance depot
+        encoderDrive(DRIVE_SPEED, 7,7,4);
+        sleep(50);
+        turn(45);
+        encoderDrive(DRIVE_SPEED,-5,-5,3);
+
+
     }
   }
   public void rightPath(){
     if (opModeIsActive()) {
       encoderDrive(DRIVE_SPEED,-3,-3,2);
-      sleep(500);
+      sleep(100);
       turn(-17);
       sleep(500);
       encoderDrive(DRIVE_SPEED,-13,-13,9);
+
+        sleep(50);
+
+        //Going to our alliance depot
+        encoderDrive(DRIVE_SPEED, 7,7,4);
+        sleep(50);
+        turn(90);
+        encoderDrive(DRIVE_SPEED,-9,-9,3);
     }
   }
   public void centerPath(){
     if (opModeIsActive()) {
       encoderDrive(DRIVE_SPEED,-15,-15,10);
-      sleep(100);
+      sleep(200);
+
+      // Going to our alliance Depot
       encoderDrive(DRIVE_SPEED, 7,7,4);
       sleep(50);
       turn(62);

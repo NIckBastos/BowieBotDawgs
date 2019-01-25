@@ -56,8 +56,8 @@ public class MainTeleOpMode extends OpMode {
 
         //This is for limiting the speed of movement motors
         if (gamepad1.a && !gamepad1.y){
-            motorMovementMin = -0.7;
-            motorMovementMax = 0.7;
+            motorMovementMin = -0.85;
+            motorMovementMax = 0.85;
 
         }else if (gamepad1.y && !gamepad1.a){
             motorMovementMin = -0.35;
