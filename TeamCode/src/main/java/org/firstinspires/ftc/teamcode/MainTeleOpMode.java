@@ -111,11 +111,11 @@ public class MainTeleOpMode extends OpMode {
 
         if(gamepad2.right_bumper && !gamepad2.left_bumper){
             robot.lockMotor.setPower(1);
-            robot.lockMotor.setTargetPosition(-75);
+            robot.lockMotor.setTargetPosition(-10);
 
         }else if(!gamepad2.right_bumper && gamepad2.left_bumper){
             robot.lockMotor.setPower(-1);
-            robot.lockMotor.setTargetPosition(75);
+            robot.lockMotor.setTargetPosition(10);
         }
 
 
