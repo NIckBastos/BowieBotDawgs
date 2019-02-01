@@ -396,6 +396,11 @@ public class Crater extends LinearOpMode {
         sleep(50);
         turn(45);
         encoderDrive(DRIVE_SPEED,-5,-5,3);
+        sleep(65);
+        turn(115);
+        encoderDrive(DRIVE_SPEED, -10,-10,5);
+      turn(90);
+      encoderDrive(DRIVE_SPEED, -10,-10,5);
 
 
     }
@@ -415,6 +420,13 @@ public class Crater extends LinearOpMode {
         sleep(50);
         turn(90);
         encoderDrive(DRIVE_SPEED,-9,-9,3);
+        sleep(65);
+        turn(90);
+        encoderDrive(DRIVE_SPEED, -10,-10,5);
+        sleep(50);
+        encoderDrive(DRIVE_SPEED, 10,10,5);
+      turn(90);
+      encoderDrive(DRIVE_SPEED, -10,-10,5);
     }
   }
   public void centerPath(){
@@ -427,6 +439,10 @@ public class Crater extends LinearOpMode {
       sleep(50);
       turn(62);
       encoderDrive(DRIVE_SPEED, -7,-7,4);
+      sleep(50);
+      turn(90);
+      encoderDrive(DRIVE_SPEED, -10,-10,5);
+
 
 
     }
